@@ -1,0 +1,27 @@
+{
+  "name": "a11y-engine",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "dev": "npm run build && node build/index.js",
+    "dev:watch": "nodemon --watch src --ext ts --exec \"npm run build && node build/index.js\"",
+    "start": "node build/index.js",
+    "clean": "rm -rf build",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run clean && pnpm run build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "nodemon": "^3.1.10",
+    "playwright": "^1.55.0"
+  },
+  "dependencies": {
+    "axe-core": "^4.10.3"
+  }
+}
