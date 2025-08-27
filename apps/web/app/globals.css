@@ -24,3 +24,14 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+/* VIOLATION: Poor color contrast (WCAG 1.4.3) */
+.low-contrast {
+  color: #999;
+  background-color: #ddd;
+}
+
+/* VIOLATION: Very poor contrast */
+.terrible-contrast {
+  color: #ccc;
+  background-color: #ddd;
+}
