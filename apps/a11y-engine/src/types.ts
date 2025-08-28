@@ -80,3 +80,5 @@ export const MOBILE_VIEWPORTS = {
   iPad: { width: 768, height: 1024 },
   androidPhone: { width: 360, height: 640 },
 } as const;
+
+export * from "./types/job";
