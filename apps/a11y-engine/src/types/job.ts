@@ -1,4 +1,4 @@
-import { ScanOptions, ScanResult } from "../types";
+import { BatchPriorityResult, ScanOptions, ScanResult } from "../types";
 
 export interface ScanJobData {
   url: string;
@@ -10,6 +10,7 @@ export interface ScanJobData {
 export interface ScanJobResult {
   success: boolean;
   result?: ScanResult;
+  priorityScores?: BatchPriorityResult;
   error?: {
     message: string;
     stack?: string;

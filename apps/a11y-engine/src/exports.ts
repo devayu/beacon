@@ -1,6 +1,6 @@
 // Main exports for external consumption
 export { A11yEngineApp } from "./app";
-export { AccessibilityScanner } from "./scanner";
+export { AccessibilityScanner } from "./services/scanner";
 export { getQueueService } from "./services/queue";
 export { getScanWorker } from "./worker/scanWorker";
 export { config } from "./config";
@@ -13,7 +13,7 @@ export {
   generateReport,
   printSummary,
   detectDarkModeMethod,
-} from "./scanner";
+} from "./services/scanner";
 
 export { getRedisConnection, closeRedisConnection } from "./services/redis";
 export { QueueService } from "./services/queue";

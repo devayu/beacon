@@ -82,3 +82,4 @@ export const MOBILE_VIEWPORTS = {
 } as const;
 
 export * from "./types/job";
+export * from "./types/priorityScorer";

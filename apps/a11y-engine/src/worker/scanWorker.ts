@@ -3,14 +3,17 @@ import { config } from "../config";
 import { getRedisConnection } from "../services/redis";
 import { logger } from "../services/logger";
 import { ScanJobData, ScanJobResult, JobProgress } from "../types/job";
-import { AccessibilityScanner } from "../scanner";
+import { AccessibilityScanner } from "../services/scanner";
+import { PriorityScorer } from "../services/priorityScorer";
 
 export class ScanWorker {
   private worker: Worker<ScanJobData, ScanJobResult>;
   private scanner: AccessibilityScanner;
+  private scorer: PriorityScorer;
 
   constructor() {
     this.scanner = new AccessibilityScanner();
+    this.scorer = new PriorityScorer();
 
     const connection = getRedisConnection();
 
@@ -82,6 +85,10 @@ export class ScanWorker {
 
       const result = await this.scanner.runScan(url, options);
 
+      const priorityScores = await this.scorer.createPriorityScore(
+        result.violations
+      );
+
       await this.updateProgress(job, {
         step: "screenshots",
         progress: 75,
@@ -99,6 +106,7 @@ export class ScanWorker {
       return {
         success: true,
         result,
+        priorityScores,
         metadata: {
           processingTime,
           timestamp: new Date().toISOString(),

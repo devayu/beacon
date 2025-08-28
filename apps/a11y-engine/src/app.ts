@@ -2,10 +2,12 @@ import { logger } from "./services/logger";
 import { getRedisConnection, closeRedisConnection } from "./services/redis";
 import { getScanWorker } from "./worker/scanWorker";
 import { getQueueService } from "./services/queue";
+import { getPriorityScorer } from "./services/priorityScorer";
 
 export class A11yEngineApp {
   private scanWorker: ReturnType<typeof getScanWorker> | null = null;
   private queueService: ReturnType<typeof getQueueService> | null = null;
+  private scorerService: ReturnType<typeof getPriorityScorer> | null = null;
   private isShuttingDown = false;
 
   async start(): Promise<void> {
@@ -21,6 +23,9 @@ export class A11yEngineApp {
 
       this.scanWorker = getScanWorker();
       logger.info("Scan worker initialized");
+
+      this.scorerService = getPriorityScorer();
+      logger.info("Priority Scorer initialized");
 
       this.setupGracefulShutdown();
 
@@ -50,7 +55,6 @@ export class A11yEngineApp {
         await this.queueService.close();
         logger.info("Queue service closed");
       }
-
       closeRedisConnection();
       logger.info("Redis connection closed");
 
@@ -91,5 +95,8 @@ export class A11yEngineApp {
 
   getScanWorker() {
     return this.scanWorker;
+  }
+  getScorerService() {
+    return this.scorerService;
   }
 }

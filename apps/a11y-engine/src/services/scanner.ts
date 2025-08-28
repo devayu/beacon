@@ -1,9 +1,9 @@
 import { AxeBuilder } from "@axe-core/playwright";
-import { ScanOptions, ScanResult, AccessibilityViolation } from "./types";
-import { BrowserManager } from "./utils/browser";
-import { ScreenshotManager } from "./utils/screenshot";
-import { ReportManager } from "./utils/report";
-import { DarkModeDetector } from "./utils/darkMode";
+import { ScanOptions, ScanResult, AccessibilityViolation } from "../types";
+import { BrowserManager } from "../utils/browser";
+import { ScreenshotManager } from "../utils/screenshot";
+import { ReportManager } from "../utils/report";
+import { DarkModeDetector } from "../utils/darkMode";
 
 export class AccessibilityScanner {
   private browserManager: BrowserManager;
@@ -190,4 +190,4 @@ export async function detectDarkModeMethod(url: string) {
   return detector.detectDarkModeMethod(url);
 }
 
-export * from "./types";
+export * from "../types";
