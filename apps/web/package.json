@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@repo/ui": "*",
+    "@upstash/redis": "^1.35.3",
+    "bullmq": "^5.58.2",
     "next": "^15.4.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

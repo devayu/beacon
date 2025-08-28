@@ -29,7 +29,11 @@ export class ScreenshotManager {
       highlightViolations &&
       (violations.length > 0 || possibleViolations.length > 0)
     ) {
-      await this.highlightViolatedElements(page, violations, possibleViolations);
+      await this.highlightViolatedElements(
+        page,
+        violations,
+        possibleViolations
+      );
       const highlightedPath = path.join(
         screenshotDir,
         `${sanitizedUrl}_violations.png`
@@ -46,42 +50,21 @@ export class ScreenshotManager {
   ): Promise<void> {
     await page.evaluate(
       ({ violations, possibleViolations }) => {
-        // Add CSS styles for highlighting
         const style = document.createElement("style");
         style.textContent = `
-        .axe-violation-highlight {
+         .axe-violation-highlight {
           outline: 3px solid #ff0000 !important;
           outline-offset: 2px !important;
+          background-color: rgba(255, 0, 0, 0.1) !important;
         }
         .axe-possible-violation-highlight {
           outline: 3px solid #ffaa00 !important;
           outline-offset: 2px !important;
+          background-color: rgba(255, 170, 0, 0.1) !important;
         }
       `;
         document.head.appendChild(style);
 
-        // Highlight actual violations in red
-        violations.forEach((violation) => {
-          violation.nodes.forEach((node: any) => {
-            node.target.forEach((selector: string) => {
-              try {
-                const elements = document.querySelectorAll(selector);
-                elements.forEach((element: Element) => {
-                  (element as HTMLElement).classList.add(
-                    "axe-violation-highlight"
-                  );
-                });
-              } catch (error) {
-                console.warn(
-                  "Could not highlight element with selector:",
-                  selector
-                );
-              }
-            });
-          });
-        });
-
-        // Highlight possible violations in yellow
         possibleViolations.forEach((violation) => {
           violation.nodes.forEach((node: any) => {
             node.target.forEach((selector: string) => {
@@ -95,6 +78,26 @@ export class ScreenshotManager {
               } catch (error) {
                 console.warn(
                   "Could not highlight possible violation with selector:",
+                  selector
+                );
+              }
+            });
+          });
+        });
+
+        violations.forEach((violation) => {
+          violation.nodes.forEach((node: any) => {
+            node.target.forEach((selector: string) => {
+              try {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach((element: Element) => {
+                  (element as HTMLElement).classList.add(
+                    "axe-violation-highlight"
+                  );
+                });
+              } catch (error) {
+                console.warn(
+                  "Could not highlight element with selector:",
                   selector
                 );
               }

@@ -1,7 +1,7 @@
-import Image from "next/image";
+"use client";
+
 import { Card } from "@repo/ui/card";
-import { Gradient } from "@repo/ui/gradient";
-import { TurborepoLogo } from "@repo/ui/turborepo-logo";
+import Image from "next/image";
 
 const LINKS = [
   {
@@ -26,7 +26,11 @@ const LINKS = [
       "Instantly deploy your Turborepo to a shareable URL with Vercel.",
   },
 ];
-
+const fetchScan = async () => {
+  const res = await fetch("/api/scan", { method: "POST" });
+  const resp = await res.json();
+  console.log(resp);
+};
 export default function Page() {
   return (
     <main className="flex flex-col items-center justify-between min-h-screen p-24">
@@ -35,7 +39,9 @@ export default function Page() {
           examples/with-tailwind -&nbsp;
           <code className="font-mono font-bold">websss</code>
         </p>
-        <button aria-invalid>testing button</button>
+        <button aria-invalid onClick={fetchScan}>
+          testing button
+        </button>
         <div className="fixed bottom-0 left-0 flex items-end justify-center w-full h-48 lg:static lg:h-auto lg:w-auto">
           <a
             className="flex gap-2 p-8 pointer-events-none place-items-center lg:pointer-events-auto lg:p-0"

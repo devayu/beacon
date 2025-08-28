@@ -1,24 +1,15 @@
-import { AccessibilityScanner } from "./scanner";
+import { A11yEngineApp } from "./app";
 
-// Example usage with the new structure
 async function main() {
-  const scanner = new AccessibilityScanner();
+  const app = new A11yEngineApp();
   
   try {
-    // Scan with smart dark mode detection
-    const result = await scanner.scanWithSmartDarkMode("http://localhost:3001/");
-    
-    console.log(result);
-    scanner.printSummary([result]);
-    
-    // Generate and save report
-    const report = scanner.generateReport([result], "./accessibility-reports/report.json");
-    console.log("\n📊 Report generated:", report.summary);
-    
+    await app.start();
   } catch (error) {
-    console.error("❌ Scan failed:", error);
+    console.error("Failed to start A11y Engine:", error);
+    process.exit(1);
   }
 }
 
-// Run the scanner
+// Run the application
 main();

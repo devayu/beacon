@@ -5,29 +5,45 @@ export class BrowserManager {
   private browser: Browser | null = null;
   private context: BrowserContext | null = null;
 
-  async createBrowser(options: ScanOptions): Promise<{ browser: Browser; context: BrowserContext; page: Page }> {
+  async createBrowser(
+    options: ScanOptions
+  ): Promise<{ browser: Browser; context: BrowserContext; page: Page }> {
     this.browser = await chromium.launch({ headless: true });
-    
+
     this.context = await this.browser.newContext({
       colorScheme: options.colorScheme || "dark",
       reducedMotion: options.reducedMotion || "no-preference",
     });
 
     const page = await this.context.newPage();
+
+    // Forward browser console logs to Node.js console for debugging
+    page.on("console", (msg) => {
+      const type = msg.type();
+      const text = msg.text();
+      if (
+        text.includes("Debug:") ||
+        text.includes("violation") ||
+        text.includes("highlight")
+      ) {
+        console.log(`[BROWSER ${type.toUpperCase()}] ${text}`);
+      }
+    });
+
     return { browser: this.browser, context: this.context, page };
   }
 
   async setupPage(
-    page: Page, 
-    context: BrowserContext, 
-    url: string, 
+    page: Page,
+    context: BrowserContext,
+    url: string,
     options: ScanOptions
   ): Promise<void> {
     const {
       viewport = { width: 1920, height: 1080 },
       userAgent,
       timeout = 60000,
-      waitUntil = "domcontentloaded"
+      waitUntil = "domcontentloaded",
     } = options;
 
     // Set viewport and user agent
@@ -46,7 +62,7 @@ export class BrowserManager {
       );
     }
 
-    console.log(`🔎 Scanning: ${url}`);
+    console.log(`[INFO] Scanning: ${url}`);
     await page.goto(url, { waitUntil, timeout });
 
     // Set localStorage after page load if provided
