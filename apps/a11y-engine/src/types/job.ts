@@ -24,7 +24,13 @@ export interface ScanJobResult {
 }
 
 export interface JobProgress {
-  step: "starting" | "scanning" | "screenshots" | "completed" | "failed";
+  step:
+    | "starting"
+    | "scanning"
+    | "screenshots"
+    | "scoring"
+    | "completed"
+    | "failed";
   progress: number;
   message?: string;
 }

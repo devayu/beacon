@@ -83,7 +83,13 @@ export class ScanWorker {
         message: "Running accessibility scan...",
       });
 
-      const result = await this.scanner.runScan(url, options);
+      const result = await this.scanner.runScan(url, job.id as string, options);
+
+      await this.updateProgress(job, {
+        step: "scoring",
+        progress: 50,
+        message: "Generating Priority score...",
+      });
 
       const priorityScores = await this.scorer.createPriorityScore(
         result.violations

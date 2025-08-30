@@ -6,21 +6,20 @@ import { AccessibilityViolation } from "../types";
 export class ScreenshotManager {
   async takeScreenshots(
     page: Page,
-    url: string,
+    jobId: string,
     outputDir: string,
     violations: AccessibilityViolation[],
     possibleViolations: AccessibilityViolation[],
     highlightViolations: boolean
   ): Promise<void> {
+    console.log("saving screenshots", jobId);
     const screenshotDir = path.join(outputDir, "screenshots");
     if (!fs.existsSync(screenshotDir)) {
       fs.mkdirSync(screenshotDir, { recursive: true });
     }
 
-    const sanitizedUrl = url.replace(/[^a-zA-Z0-9]/g, "_");
-
     // Take regular screenshot first
-    const screenshotPath = path.join(screenshotDir, `${sanitizedUrl}.png`);
+    const screenshotPath = path.join(screenshotDir, `${jobId}.png`);
     await page.screenshot({ path: screenshotPath, fullPage: true });
     console.log(`📸 Screenshot saved: ${screenshotPath}`);
 
@@ -36,7 +35,7 @@ export class ScreenshotManager {
       );
       const highlightedPath = path.join(
         screenshotDir,
-        `${sanitizedUrl}_violations.png`
+        `${jobId}_violations.png`
       );
       await page.screenshot({ path: highlightedPath, fullPage: true });
       console.log(`🔴 Violations screenshot saved: ${highlightedPath}`);
@@ -56,11 +55,45 @@ export class ScreenshotManager {
           outline: 3px solid #ff0000 !important;
           outline-offset: 2px !important;
           background-color: rgba(255, 0, 0, 0.1) !important;
+          position: relative !important;
         }
         .axe-possible-violation-highlight {
           outline: 3px solid #ffaa00 !important;
           outline-offset: 2px !important;
           background-color: rgba(255, 170, 0, 0.1) !important;
+          position: relative !important;
+        }
+        .axe-violation-label {
+          position: absolute !important;
+          top: -25px !important;
+          left: 0 !important;
+          background: #ff0000 !important;
+          color: white !important;
+          padding: 3px 8px !important;
+          font-size: 12px !important;
+          font-family: monospace !important;
+          font-weight: bold !important;
+          border-radius: 4px !important;
+          white-space: nowrap !important;
+          z-index: 10000 !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
+          border: 2px solid #ffffff !important;
+        }
+        .axe-possible-violation-label {
+          position: absolute !important;
+          top: -25px !important;
+          left: 0 !important;
+          background: #ffaa00 !important;
+          color: white !important;
+          padding: 3px 8px !important;
+          font-size: 12px !important;
+          font-family: monospace !important;
+          font-weight: bold !important;
+          border-radius: 4px !important;
+          white-space: nowrap !important;
+          z-index: 10000 !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
+          border: 2px solid #ffffff !important;
         }
       `;
         document.head.appendChild(style);
@@ -71,9 +104,14 @@ export class ScreenshotManager {
               try {
                 const elements = document.querySelectorAll(selector);
                 elements.forEach((element: Element) => {
-                  (element as HTMLElement).classList.add(
-                    "axe-possible-violation-highlight"
-                  );
+                  const htmlElement = element as HTMLElement;
+                  htmlElement.classList.add("axe-possible-violation-highlight");
+
+                  // Add violation ID label
+                  const label = document.createElement("div");
+                  label.className = "axe-possible-violation-label";
+                  label.textContent = violation.id;
+                  htmlElement.appendChild(label);
                 });
               } catch (error) {
                 console.warn(
@@ -86,14 +124,20 @@ export class ScreenshotManager {
         });
 
         violations.forEach((violation) => {
+          console.log("Processing violation:", violation.id, violation.nodes);
           violation.nodes.forEach((node: any) => {
             node.target.forEach((selector: string) => {
               try {
                 const elements = document.querySelectorAll(selector);
                 elements.forEach((element: Element) => {
-                  (element as HTMLElement).classList.add(
-                    "axe-violation-highlight"
-                  );
+                  const htmlElement = element as HTMLElement;
+                  htmlElement.classList.add("axe-violation-highlight");
+
+                  // Add violation ID label
+                  const label = document.createElement("div");
+                  label.className = "axe-violation-label";
+                  label.textContent = violation.id;
+                  htmlElement.appendChild(label);
                 });
               } catch (error) {
                 console.warn(

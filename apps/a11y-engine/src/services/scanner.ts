@@ -18,7 +18,11 @@ export class AccessibilityScanner {
     this.darkModeDetector = new DarkModeDetector();
   }
 
-  async scan(url: string, options: ScanOptions = {}): Promise<ScanResult> {
+  async scan(
+    url: string,
+    jobId: string,
+    options: ScanOptions = {}
+  ): Promise<ScanResult> {
     const {
       timeout = 60000,
       waitUntil = "domcontentloaded",
@@ -69,7 +73,7 @@ export class AccessibilityScanner {
 
         await this.screenshotManager.takeScreenshots(
           page,
-          url,
+          jobId,
           outputDir,
           violations,
           possibleViolations,
@@ -102,6 +106,7 @@ export class AccessibilityScanner {
 
   async scanMultiple(
     urls: string[],
+    jobId: string,
     options: ScanOptions = {}
   ): Promise<ScanResult[]> {
     const results: ScanResult[] = [];
@@ -113,7 +118,7 @@ export class AccessibilityScanner {
       console.log(`Progress: ${i + 1}/${urls.length}`);
 
       try {
-        const result = await this.scan(url, options);
+        const result = await this.scan(url, jobId, options);
         results.push(result);
       } catch (error) {
         console.error(`❌ Failed to scan ${url}:`, error);
@@ -128,7 +133,11 @@ export class AccessibilityScanner {
     return results;
   }
 
-  async runScan(url: string, options: ScanOptions = {}): Promise<ScanResult> {
+  async runScan(
+    url: string,
+    jobId: string,
+    options: ScanOptions = {}
+  ): Promise<ScanResult> {
     console.log("🔍 Detecting dark mode implementation...");
     const darkModeInfo = await this.darkModeDetector.detectDarkModeMethod(url);
 
@@ -140,7 +149,7 @@ export class AccessibilityScanner {
     );
 
     console.log("🌙 Running scan with smart dark mode detection...");
-    return this.scan(url, smartOptions);
+    return this.scan(url, jobId, smartOptions);
   }
 
   generateReport(results: ScanResult[], outputPath?: string) {
@@ -166,15 +175,6 @@ export class AccessibilityScanner {
     }));
   }
 }
-
-export async function scanMultipleUrls(
-  urls: string[],
-  options: ScanOptions = {}
-): Promise<ScanResult[]> {
-  const scanner = new AccessibilityScanner();
-  return scanner.scanMultiple(urls, options);
-}
-
 export function generateReport(results: ScanResult[], outputPath?: string) {
   const reportManager = new ReportManager();
   return reportManager.generateReport(results, outputPath);

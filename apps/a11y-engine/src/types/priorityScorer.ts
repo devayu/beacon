@@ -19,6 +19,9 @@ export interface ViolationPriorityScore {
   factors: PriorityScoreFactors;
   totalScore: number;
   recommendation: string;
+  explanation: string;
+  detailedExplanation: string;
+  technicalRecommendation: string;
   priority: "Critical" | "High" | "Medium" | "Low";
 }
 

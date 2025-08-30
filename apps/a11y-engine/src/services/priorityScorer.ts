@@ -20,7 +20,7 @@ export class PriorityScorer {
     this.config = {
       provider: "gemini",
       model: "gemini-2.5-flash",
-      temperature: 0.1,
+      temperature: 0,
       maxTokens: 4000,
       ...config,
     };
@@ -157,83 +157,69 @@ ${contextInfo}
 **VIOLATIONS TO ANALYZE:**
 ${violationsText}
 
-Return a JSON array with one object per violation in the same order:
-[
-  {
-    "violationId": "violation-rule-id",
-    "factors": {
-      "impact": {"score": number, "reasoning": "explanation"},
-      "reach": {"score": number, "reasoning": "explanation"}, 
-      "frequency": {"score": number, "reasoning": "explanation"},
-      "legalRisk": {"score": number, "reasoning": "explanation"},
-      "reuseFactory": {"score": number, "reasoning": "explanation"},
-      "effort": {"score": number, "reasoning": "explanation"}
-    },
-    "recommendation": "specific actionable steps"
-  }
-]`;
+Create a JSON array with one object per violation in exact order, then return JSON.stringify() of that array.
+
+Structure each object like:
+{
+  "violationId": "rule-id-here",
+  "factors": {
+    "impact": {"score": number, "reasoning": "simple explanation"},
+    "reach": {"score": number, "reasoning": "simple explanation"}, 
+    "frequency": {"score": number, "reasoning": "simple explanation"},
+    "legalRisk": {"score": number, "reasoning": "simple explanation"},
+    "reuseFactory": {"score": number, "reasoning": "simple explanation"},
+    "effort": {"score": number, "reasoning": "simple explanation"}
+  },
+  "recommendation": "simple fix steps in everyday language",
+  "explanation": "short sentence explaining the issue",
+  "detailedExplanation": "real-world analogy then actual issue explanation 2-3 sentences",
+  "technicalRecommendation": "specific code examples and technical implementation steps"
+}
+
+CRITICAL: Return ONLY JSON.stringify(yourArrayObject). Nothing else. No markdown. No explanations.`;
   }
 
   private getSystemPrompt(): string {
-    return `You are an expert accessibility consultant analyzing WCAG violations for prioritization.
+    return `You are an accessibility expert. Score violations on 6 factors (1-10 scale) and provide user-friendly explanations.
 
-Score each violation on 6 factors (1-10 scale):
+SCORING (simple guidelines):
+- IMPACT: How much this hurts users (10=stops them completely, 1=minor annoyance)
+- REACH: How many people affected (10=many users, 1=few users)  
+- FREQUENCY: How often this appears (10=everywhere on site, 1=one place)
+- LEGAL RISK: Lawsuit chances (10=very likely to cause problems, 1=unlikely)
+- REUSE FACTOR: How much fixing helps (10=fixes many pages, 1=fixes one thing)
+- EFFORT: How easy to fix (10=very easy, 1=very hard)
 
-**IMPACT** (User experience severity):
-- 10: Blocks task completion (keyboard traps, missing focus)
-- 8-9: Major barriers (missing alt text, no skip links)  
-- 6-7: Moderate barriers (contrast, missing labels)
-- 4-5: Minor issues (link text, heading order)
-- 1-3: Subtle issues (minor contrast, duplicate IDs)
+RESPONSE REQUIREMENTS:
+1. recommendation: Use simple words, no technical terms
+2. explanation: Short simple sentence about why this matters
+3. detailedExplanation: Start with a real-world analogy then explain the issue (2-3 sentences max)
+4. technicalRecommendation: Include specific code examples and technical steps
 
-**REACH** (Users affected):
-- Screen reader: ~2%, Keyboard: ~8%, Low vision: ~4%
-- Weight by violation impact on each group
-- Consider page traffic and importance
-
-**FREQUENCY** (Issue prevalence):
-- 10: 20+ instances or site-wide pattern
-- 8-9: 10-19 instances or template issue  
-- 6-7: 5-9 instances or component issue
-- 4-5: 2-4 instances or page-specific
-- 1-3: Single instance
-
-**LEGAL RISK** (Compliance exposure):
-- 10: Level A, high lawsuit risk (keyboard, alt text)
-- 8-9: Level AA, commonly cited (contrast, labels)
-- 6-7: Important AA (focus, error handling)  
-- 4-5: Less critical AA or AAA
-- 1-3: Edge cases
-
-**REUSE FACTOR** (Fix scope):
-- 10: Design system/component affects many pages
-- 8-9: Template fix affects page type
-- 6-7: Pattern used multiple places
-- 4-5: Similar patterns exist elsewhere  
-- 1-3: Unique one-off issue
-
-**EFFORT** (Implementation ease):
-- 10: Simple text/attribute change
-- 8-9: Markup restructuring
-- 6-7: Interactive behavior changes
-- 4-5: Layout or design changes
-- 1-3: Complex component rewrite
-
-Return valid JSON only.`;
+CRITICAL: Return ONLY JSON.stringify(yourArrayObject). No markdown. No code blocks. No explanations.`;
   }
 
   private parseAIResponse(
     response: string,
     violations: AccessibilityViolation[]
   ): ViolationPriorityScore[] {
+    console.log(response, "-----");
     try {
-      // Clean the response to extract JSON
-      const jsonMatch = response.match(/\[[\s\S]*\]/);
-      if (!jsonMatch) {
-        throw new Error("No JSON array found in response");
+      // The AI returns JSON.stringify() result, so we parse it to get the actual JSON
+      let jsonText = response.trim();
+
+      // If response is a stringified JSON (starts and ends with quotes), parse it first
+      if (jsonText.startsWith('"') && jsonText.endsWith('"')) {
+        jsonText = JSON.parse(jsonText);
       }
 
-      const parsedScores = JSON.parse(jsonMatch[0]);
+      // Now parse the actual JSON array
+      const parsedScores = JSON.parse(jsonText);
+      logger.info(
+        "Successfully parsed AI scores for",
+        parsedScores.length,
+        "violations"
+      );
 
       return parsedScores.map((scoreData: any, index: number) => {
         const violation = violations[index];
@@ -243,7 +229,15 @@ Return valid JSON only.`;
           violationId: violation.id,
           factors: scoreData.factors,
           totalScore,
-          recommendation: scoreData.recommendation,
+          recommendation:
+            scoreData.recommendation || `Fix the ${violation.id} issue`,
+          explanation:
+            scoreData.explanation || "This affects users with disabilities",
+          detailedExplanation:
+            scoreData.detailedExplanation ||
+            "This issue creates barriers for some users",
+          technicalRecommendation:
+            scoreData.technicalRecommendation || violation.help,
           priority: this.determinePriority(totalScore),
         };
       });
@@ -309,7 +303,10 @@ Return valid JSON only.`;
       violationId: violation.id,
       factors,
       totalScore,
-      recommendation: `Fix ${violation.id}: ${violation.help}`,
+      recommendation: `Fix the ${violation.id} issue`,
+      explanation: "This affects users with disabilities",
+      detailedExplanation: "This issue creates barriers for some users",
+      technicalRecommendation: violation.help,
       priority: this.determinePriority(totalScore),
     };
   }

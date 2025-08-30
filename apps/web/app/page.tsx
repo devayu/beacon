@@ -26,22 +26,10 @@ const LINKS = [
       "Instantly deploy your Turborepo to a shareable URL with Vercel.",
   },
 ];
-const fetchScan = async () => {
-  const res = await fetch("/api/scan", { method: "POST" });
-  const resp = await res.json();
-  console.log(resp);
-};
 export default function Page() {
   return (
     <main className="flex flex-col items-center justify-between min-h-screen p-24">
       <div className="z-10 items-center justify-between w-full max-w-5xl font-mono text-sm lg:flex">
-        <p className="fixed top-0 left-0 flex justify-center w-full px-4 pt-8 pb-6 border backdrop-blur-2xl border-neutral-800 from-inherit lg:static lg:w-auto lg:rounded-xl lg:p-4 text-[5px]">
-          examples/with-tailwind -&nbsp;
-          <code className="font-mono font-bold">websss</code>
-        </p>
-        <button aria-invalid onClick={fetchScan}>
-          testing button
-        </button>
         <div className="fixed bottom-0 left-0 flex items-end justify-center w-full h-48 lg:static lg:h-auto lg:w-auto">
           <a
             className="flex gap-2 p-8 pointer-events-none place-items-center lg:pointer-events-auto lg:p-0"
@@ -60,6 +48,37 @@ export default function Page() {
             />
           </a>
         </div>
+      </div>
+
+      {/* WCAG Violations for Testing */}
+      <div className="wcag-testing-section">
+        {/* Missing alt text */}
+        <img src="/vercel.svg" className="w-8 h-8" />
+
+        {/* Poor color contrast */}
+        <p style={{ color: "#cccccc", backgroundColor: "#f0f0f0" }}>
+          This text has very poor contrast and is hard to read
+        </p>
+
+        {/* Missing form labels */}
+        <input type="text" />
+        <input type="email" placeholder="Enter your email" />
+
+        {/* Missing button labels */}
+        <button className="w-8 h-8 bg-blue-500"></button>
+        <button className="w-8 h-8 bg-red-500"></button>
+
+        <h1>Main heading</h1>
+        <h3>Another heading</h3>
+
+        {/* Empty links */}
+        <a href="#">Link with no text</a>
+
+        {/* Form without fieldset/legend */}
+        <form>
+          <input type="radio" name="gender" value="male" />
+          <input type="radio" name="gender" value="female" />
+        </form>
       </div>
 
       <p className="low-contrast">

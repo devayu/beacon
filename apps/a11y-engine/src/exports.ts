@@ -9,7 +9,6 @@ export { logger } from "./services/logger";
 export * from "./types";
 
 export {
-  scanMultipleUrls,
   generateReport,
   printSummary,
   detectDarkModeMethod,
