@@ -13,11 +13,19 @@ import { Progress } from "../../components/ui/progress";
 import { ViolationCard } from "../../components/ViolationCard";
 import { ScreenshotDisplay } from "../../components/ScreenshotDisplay";
 import { useScanJob } from "../../hooks/useScanJob";
+import IconButton from "@/components/ui/IconButton";
 
 export default function Dashboard() {
   const [url, setUrl] = useState("");
-  const { isScanning, progress, jobStatus, scanResult, error, startScan, jobId } =
-    useScanJob();
+  const {
+    isScanning,
+    progress,
+    jobStatus,
+    scanResult,
+    error,
+    startScan,
+    jobId,
+  } = useScanJob();
 
   const handleScan = async () => {
     if (!url.trim()) return;
@@ -33,7 +41,7 @@ export default function Dashboard() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
+        <h1 className="text-3xl font-semibold mb-2 font-serif">Dashboard</h1>
       </div>
 
       {/* Scan Form */}
@@ -47,13 +55,13 @@ export default function Dashboard() {
           disabled={isScanning}
           className="flex-1"
         />
-        <Button
+        <IconButton
           onClick={handleScan}
           disabled={isScanning || !url.trim()}
           className="min-w-[100px]"
         >
           {isScanning ? "Scanning..." : "Scan"}
-        </Button>
+        </IconButton>
       </div>
 
       {error && (
@@ -134,7 +142,7 @@ export default function Dashboard() {
               Accessibility Violations
             </h2>
             <div className="space-y-4">
-              {scanResult.priorityScores?.violations.map((violation, index) => (
+              {scanResult.priorityScores?.violations.map((violation: any, index: number) => (
                 <ViolationCard
                   key={`${violation.violationId}-${index}`}
                   violation={violation}

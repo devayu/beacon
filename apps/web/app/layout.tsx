@@ -1,13 +1,40 @@
-import "@repo/ui/styles.css";
 import "./globals.css";
 import type { Metadata } from "next";
-import { Geist, Space_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const geist = Geist({ subsets: ["latin"] });
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
-  subsets: ["latin"],
+const satoshi = localFont({
+  variable: "--font-sans",
+  display: "swap",
+  src: [
+    {
+      path: "../public/fonts/Satoshi-Variable.woff2",
+      weight: "300 900",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/Satoshi-VariableItalic.woff2",
+      weight: "300 900",
+      style: "italic",
+    },
+  ],
+});
+
+const clashDisplay = localFont({
+  variable: "--font-serif",
+  display: "swap",
+  src: [
+    // {
+    //   path: "../public/fonts/ClashDisplay-Variable.woff2",
+    //   weight: "200 700",
+    //   style: "normal",
+    // },
+    {
+      path: "../public/fonts/ClashGrotesk-Variable.woff2",
+      weight: "200 700",
+      style: "normal",
+    },
+  ],
 });
 
 export const metadata: Metadata = {
@@ -24,7 +51,7 @@ export default function RootLayout({
     <>
       <html lang="en" suppressHydrationWarning>
         <head />
-        <body className={`${spaceGrotesk.variable}`}>
+        <body className={`${satoshi.variable} ${clashDisplay.variable}`}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

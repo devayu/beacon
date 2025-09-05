@@ -1,16 +1,14 @@
 import { NextResponse } from "next/server";
 import { scanQueue } from "../../redis/queue";
-
+import { v4 as uuidv4 } from "uuid";
+import { redis } from "../../redis/queue";
 export async function POST(request: Request): Promise<NextResponse> {
   try {
     const body = await request.json();
     const { url } = body;
 
     if (!url) {
-      return NextResponse.json(
-        { error: "URL is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "URL is required" }, { status: 400 });
     }
 
     // Validate URL format
@@ -24,16 +22,27 @@ export async function POST(request: Request): Promise<NextResponse> {
     }
 
     console.log(`[INFO] Adding scan job for URL: ${url}`);
-    const job = await scanQueue.add("accessibility-scan", {
-      url,
-      timestamp: new Date().toISOString(),
-    });
+    const jobStatusId = uuidv4();
 
-    return NextResponse.json({
-      jobId: job.id,
-      status: "queued",
-      url,
-    });
+    await redis.set(jobStatusId, "CREATING");
+
+    try {
+      const job = await scanQueue.add("accessibility-scan", {
+        url,
+        timestamp: new Date().toISOString(),
+        statusId: jobStatusId,
+      });
+      await redis.set(jobStatusId, "PENDING");
+      return NextResponse.json({
+        jobId: job.id,
+        status: "queued",
+        statusId: jobStatusId,
+        url,
+      });
+    } catch (err) {
+      await redis.del(jobStatusId);
+      throw err;
+    }
   } catch (error) {
     console.error("[ERROR] Failed to create scan job:", error);
     return NextResponse.json(

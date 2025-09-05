@@ -31,10 +31,10 @@ export function useScanJob() {
 
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const startPolling = useCallback((jobId: string) => {
+  const startPolling = useCallback((jobId: string, statusId: string) => {
     const poll = async () => {
       try {
-        const response = await fetch(`/api/jobs/${jobId}/status`);
+        const response = await fetch(`/api/jobs/${jobId}/status/${statusId}`);
         const data = await response.json();
 
         if (!response.ok) {
@@ -116,7 +116,7 @@ export function useScanJob() {
         }
 
         // Start polling for job status
-        startPolling(data.jobId);
+        startPolling(data.jobId, data.statusId);
       } catch (err) {
         setIsScanning(false);
         setError(err instanceof Error ? err.message : "Unknown error");

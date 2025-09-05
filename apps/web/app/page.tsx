@@ -1,6 +1,6 @@
 "use client";
 
-import { Card } from "@repo/ui/card";
+import { Card } from "../components/ui/card";
 import Image from "next/image";
 
 const LINKS = [
