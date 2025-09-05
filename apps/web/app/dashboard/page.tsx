@@ -1,22 +1,26 @@
 "use client";
 
+import IconButton from "@/components/ui/icon-button";
 import { useState } from "react";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
+import { ScreenshotDisplay } from "../../components/screenshot-display";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
 import { Progress } from "../../components/ui/progress";
-import { ViolationCard } from "../../components/ViolationCard";
-import { ScreenshotDisplay } from "../../components/ScreenshotDisplay";
+import { ViolationCard } from "../../components/violation-card";
 import { useScanJob } from "../../hooks/useScanJob";
-import IconButton from "@/components/ui/IconButton";
-
+import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 export default function Dashboard() {
+  const router = useRouter();
   const [url, setUrl] = useState("");
+  const [registerUrl, setRegisterUrl] = useState("");
   const {
     isScanning,
     progress,
@@ -37,13 +41,52 @@ export default function Dashboard() {
       handleScan();
     }
   };
+  const registerRoute = async () => {
+    try {
+      const { data } = await axios.post("/api/register", {
+        url: registerUrl,
+      });
+      console.log(data);
+    } catch (error) {}
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="mb-8">
         <h1 className="text-3xl font-semibold mb-2 font-serif">Dashboard</h1>
       </div>
+      <Button
+        onClick={() => {
+          authClient.signOut({
+            fetchOptions: {
+              onSuccess: () => {
+                router.push("/sign-in");
+              },
+            },
+          });
+        }}
+      >
+        Signout
+      </Button>
 
+      <div className="flex gap-4 items-center mb-4">
+        <Input
+          type="url"
+          placeholder="register a route"
+          value={registerUrl}
+          onChange={(e) => setRegisterUrl(e.target.value)}
+          onKeyPress={handleKeyPress}
+          // disabled={isScanning}
+          className="flex-1"
+        />
+        <IconButton
+          onClick={registerRoute}
+          className="min-w-[100px]"
+          variant="destructive"
+        >
+          {isScanning ? "Registering..." : "Register"}
+        </IconButton>
+      </div>
       {/* Scan Form */}
       <div className="flex gap-4 items-center mb-4">
         <Input
@@ -142,12 +185,14 @@ export default function Dashboard() {
               Accessibility Violations
             </h2>
             <div className="space-y-4">
-              {scanResult.priorityScores?.violations.map((violation: any, index: number) => (
-                <ViolationCard
-                  key={`${violation.violationId}-${index}`}
-                  violation={violation}
-                />
-              ))}
+              {scanResult.priorityScores?.violations.map(
+                (violation: any, index: number) => (
+                  <ViolationCard
+                    key={`${violation.violationId}-${index}`}
+                    violation={violation}
+                  />
+                )
+              )}
             </div>
           </div>
         </div>

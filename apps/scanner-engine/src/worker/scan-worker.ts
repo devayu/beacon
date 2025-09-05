@@ -1,10 +1,9 @@
 import { Job, Worker, Queue } from "bullmq";
 import { config } from "../config";
-import { getRedisConnection } from "../services/redis";
-import { logger } from "../services/logger";
+import { getRedisConnection, Redis } from "@beacon/redis";
+import { logger } from "@beacon/logger";
 import { ScanJobData, ScanJobResult, JobProgress } from "../types/job";
 import { AccessibilityScanner } from "../services/scanner";
-import Redis from "ioredis";
 
 export class ScanWorker {
   private worker: Worker<ScanJobData, ScanJobResult>;
@@ -15,7 +14,7 @@ export class ScanWorker {
   constructor() {
     this.scanner = new AccessibilityScanner();
 
-    this.redisConnection = getRedisConnection();
+    this.redisConnection = getRedisConnection(config.redis);
 
     this.aiQueue = new Queue(config.redis.aiQueueId, {
       connection: this.redisConnection,

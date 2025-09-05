@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { scanQueue } from "../../redis/queue";
 import { v4 as uuidv4 } from "uuid";
-import { redis } from "../../redis/queue";
+import { setCache, delCache } from "@beacon/redis";
+import { logger } from "@beacon/logger";
+import { prisma } from "../../../lib/db";
 export async function POST(request: Request): Promise<NextResponse> {
   try {
     const body = await request.json();
@@ -21,26 +23,32 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
 
-    console.log(`[INFO] Adding scan job for URL: ${url}`);
+    logger.info(`Adding scan job for URL: ${url}`);
     const jobStatusId = uuidv4();
 
-    await redis.set(jobStatusId, "CREATING");
+    await setCache(jobStatusId, "CREATING");
+    const { id: jobDbId } = await prisma.scanJob.create({
+      data: {
+        url,
+      },
+    });
 
     try {
-      const job = await scanQueue.add("accessibility-scan", {
+      const job = await scanQueue.add(jobStatusId, {
         url,
         timestamp: new Date().toISOString(),
         statusId: jobStatusId,
+        jobDbId,
       });
-      await redis.set(jobStatusId, "PENDING");
+      await setCache(jobStatusId, "PENDING");
       return NextResponse.json({
         jobId: job.id,
-        status: "queued",
+        status: "QUEUED",
         statusId: jobStatusId,
         url,
       });
     } catch (err) {
-      await redis.del(jobStatusId);
+      await delCache(jobStatusId);
       throw err;
     }
   } catch (error) {

@@ -1,5 +1,6 @@
+import { getCache } from "@beacon/redis";
 import { NextResponse } from "next/server";
-import { redis, scanQueue } from "../../../../../redis/queue";
+import { scanQueue } from "../../../../../redis/queue";
 
 export async function GET(
   request: Request,
@@ -14,7 +15,7 @@ export async function GET(
         { status: 400 }
       );
     }
-    const status = await redis.get(statusId);
+    const status = await getCache(statusId);
     console.log("status", status);
 
     const job = await scanQueue.getJob(jobId);
@@ -35,7 +36,7 @@ export async function GET(
     };
 
     // Check for AI-processed results in Redis
-    const scanResult = await redis.get(`scan-result:${jobId}`);
+    const scanResult = (await getCache(`scan-result:${jobId}`)) as string;
     if (scanResult) {
       const parsedResult = JSON.parse(scanResult);
       response = {

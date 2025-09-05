@@ -1,0 +1,19 @@
+{
+  "name": "@beacon/logger",
+  "version": "1.0.0",
+  "description": "Shared logger utility for Beacon services",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rm -rf build",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": ["logger", "beacon", "shared"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

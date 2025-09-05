@@ -1,10 +1,9 @@
 import { Job, Worker } from "bullmq";
-import { getRedisConnection } from "../services/redis";
-import { logger } from "../services/logger";
+import { getRedisConnection, Redis } from "@beacon/redis";
+import { logger } from "@beacon/logger";
 import { getPriorityScorer } from "../services/priority-scorer";
 import { AccessibilityViolation } from "../types";
-import Redis from "ioredis";
-import { config } from "../config/index";
+import { config } from "../config";
 
 interface AIJobData {
   scanJobId: string;
@@ -31,14 +30,14 @@ export class AIWorker {
 
   constructor() {
     this.scorer = getPriorityScorer();
-    this.redisConnection = getRedisConnection();
+    this.redisConnection = getRedisConnection(config.redis);
 
     this.worker = new Worker<AIJobData, AIJobResult>(
       config.redis.queueId,
       this.processJob.bind(this),
       {
         connection: this.redisConnection,
-        concurrency: config.worker.concurrency
+        concurrency: config.worker.concurrency,
       }
     );
 
@@ -79,7 +78,9 @@ export class AIWorker {
     }
   }
 
-  private async processJob(job: Job<AIJobData, AIJobResult>): Promise<AIJobResult> {
+  private async processJob(
+    job: Job<AIJobData, AIJobResult>
+  ): Promise<AIJobResult> {
     const startTime = Date.now();
     const { scanJobId, violations, url, statusId } = job.data;
 
@@ -118,7 +119,7 @@ export class AIWorker {
               workerVersion: "1.0.0",
             },
           }),
-          "EX", 
+          "EX",
           3600 // Expire after 1 hour
         );
       }

@@ -22,10 +22,11 @@
     "playwright": "^1.55.0"
   },
   "dependencies": {
+    "@beacon/logger": "*",
+    "@beacon/redis": "*",
     "axe-core": "^4.10.3",
     "bullmq": "^5.58.2",
     "dotenv": "^17.2.1",
-    "ioredis": "^5.7.0",
     "processenv": "^3.0.9"
   }
 }

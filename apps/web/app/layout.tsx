@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const satoshi = localFont({
   variable: "--font-sans",
@@ -59,6 +60,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            <Toaster richColors position="bottom-center"></Toaster>
           </ThemeProvider>
         </body>
       </html>

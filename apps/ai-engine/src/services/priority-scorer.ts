@@ -6,10 +6,10 @@ import {
   BatchPriorityResult,
   PriorityScoreFactors,
   ViolationContext,
-  ViolationPriorityScore
+  ViolationPriorityScore,
 } from "../types";
 import { getSystemPrompt, buildBatchPrompt } from "../utils/prompt";
-import { logger } from "./logger";
+import { logger } from "@beacon/logger";
 
 export class PriorityScorer {
   private openai: OpenAI;
@@ -109,7 +109,7 @@ export class PriorityScorer {
     const response = await this.openai.chat.completions.create({
       model: this.config.model,
       messages: [
-        { role: "system", content:  getSystemPrompt()},
+        { role: "system", content: getSystemPrompt() },
         { role: "user", content: prompt },
       ],
       temperature: this.config.temperature,
@@ -118,9 +118,6 @@ export class PriorityScorer {
 
     return response.choices[0]?.message?.content || "";
   }
-
-
-
 
   private parseAIResponse(
     response: string,
