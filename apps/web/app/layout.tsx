@@ -1,9 +1,41 @@
-import "@repo/ui/styles.css";
 import "./globals.css";
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import localFont from "next/font/local";
+import { ThemeProvider } from "@/components/theme-provider";
 
-const geist = Geist({ subsets: ["latin"] });
+const satoshi = localFont({
+  variable: "--font-sans",
+  display: "swap",
+  src: [
+    {
+      path: "../public/fonts/Satoshi-Variable.woff2",
+      weight: "300 900",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/Satoshi-VariableItalic.woff2",
+      weight: "300 900",
+      style: "italic",
+    },
+  ],
+});
+
+const clashDisplay = localFont({
+  variable: "--font-serif",
+  display: "swap",
+  src: [
+    // {
+    //   path: "../public/fonts/ClashDisplay-Variable.woff2",
+    //   weight: "200 700",
+    //   style: "normal",
+    // },
+    {
+      path: "../public/fonts/ClashGrotesk-Variable.woff2",
+      weight: "200 700",
+      style: "normal",
+    },
+  ],
+});
 
 export const metadata: Metadata = {
   title: "Create Turborepo",
@@ -16,8 +48,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={geist.className}>{children}</body>
-    </html>
+    <>
+      <html lang="en" suppressHydrationWarning>
+        <head />
+        <body className={`${satoshi.variable} ${clashDisplay.variable}`}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </body>
+      </html>
+    </>
   );
 }
