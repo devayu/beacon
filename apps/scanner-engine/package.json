@@ -17,13 +17,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@axe-core/playwright": "^4.10.2",
     "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.10",
-    "playwright": "^1.55.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "playwright": "^1.55.0",
     "@beacon/db": "workspace:*",
     "@beacon/logger": "workspace:*",
     "@beacon/redis": "workspace:*",
