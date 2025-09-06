@@ -124,7 +124,6 @@ export class PriorityScorer {
     response: string,
     violations: AccessibilityViolation[]
   ): ViolationPriorityScore[] {
-    console.log(response, "-----");
     try {
       // The AI returns JSON.stringify() result, so we parse it to get the actual JSON
       let jsonText = response.trim();
