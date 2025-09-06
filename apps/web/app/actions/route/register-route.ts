@@ -19,6 +19,7 @@ export const registerRoute = async (
   const existingRoute = await prisma.route.findFirst({
     where: {
       url,
+      userId: user.id,
     },
   });
   if (existingRoute) {

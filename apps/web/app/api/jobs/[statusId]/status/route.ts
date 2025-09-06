@@ -1,7 +1,6 @@
+import { checkUnauthorizedAccess } from "@/lib/get-session";
 import { getCache, getRedisConnection } from "@beacon/redis";
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
-import { checkUnauthorizedAccess } from "@/lib/get-session";
 
 export async function GET(
   _: NextRequest,
@@ -25,7 +24,6 @@ export async function GET(
       progress: number;
       message: string;
     };
-    console.log(status, "status");
     return NextResponse.json(status);
   } catch (error) {
     console.error("[ERROR] Failed to get job status:", error);

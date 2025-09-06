@@ -21,6 +21,18 @@ export const getLastRuns = async (routeId: string) => {
       where: {
         routeId,
         userId: user.id,
+        status: "COMPLETED",
+      },
+      select: {
+        transformedResult: true,
+        screenshotUrl: true,
+        id: true,
+        violationsScreenshotUrl: true,
+        updatedAt: true,
+        status: true,
+      },
+      orderBy: {
+        updatedAt: "desc",
       },
     });
     return {

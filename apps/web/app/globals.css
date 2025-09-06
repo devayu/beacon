@@ -38,9 +38,9 @@
   --sidebar-accent-foreground: oklch(0.2101 0.0318 264.6645);
   --sidebar-border: oklch(0.9276 0.0058 264.5313);
   --sidebar-ring: oklch(0.6447 0.241 27.376);
-  /* --font-sans: Satoshi, ui-sans-serif, sans-serif, system-ui;
+  --font-sans: Satoshi, ui-sans-serif, sans-serif, system-ui;
   --font-serif: ClashDisplay;
-  --font-mono: Geist Mono, ui-monospace, monospace; */
+  --font-mono: Geist Mono, ui-monospace, monospace;
   --radius: 0.3125rem;
   --shadow-2xs: 0px 1px 4px 0px hsl(0 0% 0% / 0.03);
   --shadow-xs: 0px 1px 4px 0px hsl(0 0% 0% / 0.03);
@@ -92,9 +92,9 @@
   --sidebar-accent-foreground: oklch(0.8109 0 0);
   --sidebar-border: oklch(0.252 0 0);
   --sidebar-ring: oklch(0.7214 0.1337 49.9802);
-  /* --font-sans: Satoshi, ui-sans-serif, sans-serif, system-ui;
+  --font-sans: Satoshi, ui-sans-serif, sans-serif, system-ui;
   --font-serif: ClashDisplay;
-  --font-mono: Geist Mono, ui-monospace, monospace; */
+  --font-mono: Geist Mono, ui-monospace, monospace;
   --radius: 0.3125rem;
   --shadow-2xs: 0px 1px 4px 0px hsl(0 0% 0% / 0.03);
   --shadow-xs: 0px 1px 4px 0px hsl(0 0% 0% / 0.03);

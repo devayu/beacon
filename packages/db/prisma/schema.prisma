@@ -43,6 +43,7 @@ model ScanJob {
   status                   ScanStatus @default(PENDING)
   result                   Json?
   priority                 Json?
+  transformedResult        Json?
   userId                   String?
   screenshotUrl            String?
   violationsScreenshotUrl  String?

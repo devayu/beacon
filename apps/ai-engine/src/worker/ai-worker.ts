@@ -79,6 +79,7 @@ export class AIWorker {
     }
   }
 
+
   private async processJob(
     job: Job<AIJobData, AIJobResult>
   ): Promise<AIJobResult> {
@@ -173,6 +174,27 @@ export class AIWorker {
               }
             })
           );
+        }
+
+        // Update ScanJob with transformed result
+        if (priorityScores.transformedResult) {
+          try {
+            await tx.scanJob.update({
+              where: {
+                id: jobDbId,
+              },
+              data: {
+                transformedResult: priorityScores.transformedResult as any,
+                status: "COMPLETED",
+              },
+            });
+            logger.info(
+              `Saved transformed result for ${priorityScores.transformedResult.length} violations`
+            );
+          } catch (error) {
+            logger.error("Failed to save transformed result:", error);
+            // Don't throw here as this is supplementary data
+          }
         }
 
         logger.info(
