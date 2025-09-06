@@ -113,6 +113,22 @@
         "SUPABASE_URL",
         "UPLOADTHING_TOKEN"
       ]
+    },
+    "start": {
+      "cache": false,
+      "persistent": true,
+      "env": [
+        "DATABASE_URL",
+        "UPSTASH_REDIS_URL",
+        "REDIS_QUEUE_ID",
+        "REDIS_AI_QUEUE_ID",
+        "REDIS_SCAN_QUEUE_ID",
+        "GEMINI_API_KEY",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "SUPABASE_URL",
+        "UPLOADTHING_TOKEN"
+      ]
     }
   }
 }
