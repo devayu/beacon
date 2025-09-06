@@ -19,7 +19,8 @@
   "license": "ISC",
   "dependencies": {
     "ioredis": "^5.7.0",
-    "@beacon/logger": "*"
+    "@beacon/logger": "workspace:*",
+    "dotenv": "^17.2.1"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

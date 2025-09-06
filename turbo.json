@@ -1,11 +1,94 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "tui",
+  "globalEnv": ["NODE_ENV"],
   "tasks": {
+    "db:generate": {
+      "inputs": [".env*"],
+      "outputs": ["packages/db/generated/prisma/**"],
+      "env": ["DATABASE_URL"]
+    },
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^db:generate", "^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["build/**", "dist/**", ".next/**", "!.next/cache/**"]
+      "outputs": ["build/**", "dist/**", ".next/**", "!.next/cache/**"],
+      "env": [
+        "DATABASE_URL",
+        "UPSTASH_REDIS_URL",
+        "UPSTASH_REDIS_REST_URL",
+        "UPSTASH_REDIS_REST_TOKEN",
+        "REDIS_QUEUE_ID",
+        "REDIS_AI_QUEUE_ID",
+        "REDIS_SCAN_QUEUE_ID",
+        "GEMINI_API_KEY",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "SUPABASE_URL",
+        "UPLOADTHING_TOKEN"
+      ]
+    },
+    "ai-engine#build": {
+      "dependsOn": [
+        "@beacon/db#build",
+        "@beacon/logger#build",
+        "@beacon/redis#build"
+      ],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["build/**"],
+      "env": [
+        "DATABASE_URL",
+        "UPSTASH_REDIS_URL",
+        "GEMINI_API_KEY",
+        "REDIS_QUEUE_ID"
+      ]
+    },
+    "scanner-engine#build": {
+      "dependsOn": [
+        "@beacon/db#build",
+        "@beacon/logger#build",
+        "@beacon/redis#build"
+      ],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["build/**"],
+      "env": [
+        "DATABASE_URL",
+        "UPSTASH_REDIS_URL",
+        "UPLOADTHING_TOKEN",
+        "REDIS_QUEUE_ID",
+        "REDIS_AI_QUEUE_ID"
+      ]
+    },
+    "web#build": {
+      "dependsOn": [
+        "@beacon/db#build",
+        "@beacon/logger#build",
+        "@beacon/redis#build"
+      ],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": [
+        "DATABASE_URL",
+        "UPSTASH_REDIS_URL",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "REDIS_SCAN_QUEUE_ID"
+      ]
+    },
+    "@beacon/db#build": {
+      "dependsOn": ["@beacon/db#db:generate", "@beacon/logger#build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["build/**"],
+      "env": ["DATABASE_URL"]
+    },
+    "@beacon/logger#build": {
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": ["build/**"]
+    },
+    "@beacon/redis#build": {
+      "dependsOn": ["@beacon/logger#build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["build/**"],
+      "env": ["UPSTASH_REDIS_URL"]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -15,7 +98,21 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": [
+        "DATABASE_URL",
+        "UPSTASH_REDIS_URL",
+        "UPSTASH_REDIS_REST_URL",
+        "UPSTASH_REDIS_REST_TOKEN",
+        "REDIS_QUEUE_ID",
+        "REDIS_AI_QUEUE_ID",
+        "REDIS_SCAN_QUEUE_ID",
+        "GEMINI_API_KEY",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "SUPABASE_URL",
+        "UPLOADTHING_TOKEN"
+      ]
     }
   }
 }
