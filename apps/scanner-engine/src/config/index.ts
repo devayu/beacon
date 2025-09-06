@@ -14,6 +14,9 @@ export interface Config {
       rejectUnauthorized: boolean;
     };
   };
+  storage: {
+    uploadthingSecret: string;
+  };
   scanner: {
     defaultTimeout: number;
     defaultOutputDir: string;
@@ -48,6 +51,9 @@ export const config: Config = {
     tls: {
       rejectUnauthorized: false,
     },
+  },
+  storage: {
+    uploadthingSecret: validateEnvVar("UPLOADTHING_TOKEN"),
   },
   scanner: {
     defaultTimeout: 60000,

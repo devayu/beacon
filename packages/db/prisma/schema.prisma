@@ -38,16 +38,18 @@ enum Plan {
 }
 
 model ScanJob {
-  id          String     @id @default(cuid())
-  routeId     String
-  status      ScanStatus @default(PENDING)
-  result      Json?
-  priority    Json?
-  userId      String?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  completedAt DateTime?
-  error       String?
+  id                       String     @id @default(cuid())
+  routeId                  String
+  status                   ScanStatus @default(PENDING)
+  result                   Json?
+  priority                 Json?
+  userId                   String?
+  screenshotUrl            String?
+  violationsScreenshotUrl  String?
+  createdAt                DateTime   @default(now())
+  updatedAt                DateTime   @updatedAt
+  completedAt              DateTime?
+  error                    String?
 
   violations AccessibilityViolation[]
   route      Route                    @relation(fields: [routeId], references: [id])
@@ -56,15 +58,17 @@ model ScanJob {
 }
 
 model AccessibilityViolation {
-  id          String          @id @default(cuid())
-  scanJobId   String
-  ruleId      String
-  impact      ViolationImpact
-  description String
-  help        String
-  helpUrl     String
-  nodes       Json[]
-  createdAt   DateTime        @default(now())
+  id            String          @id @default(cuid())
+  scanJobId     String
+  ruleId        String
+  impact        ViolationImpact
+  description   String
+  help          String
+  helpUrl       String
+  priority      PriorityLevel
+  nodes         Json[]
+  createdAt     DateTime        @default(now())
+  priorityScore Int
 
   scanJob ScanJob @relation(fields: [scanJobId], references: [id], onDelete: Cascade)
 
@@ -83,11 +87,11 @@ model Route {
 }
 
 model Explanation {
-  id             String @id @default(cuid())
-  issueCode      String @unique
-  explanation    String
-  recommendation String
-  priorityScore  Int
+  id                  String @id @default(cuid())
+  issueCode           String @unique
+  explanation         String
+  detailedExplanation String
+  recommendation      String
 
   @@map("explanation")
 }

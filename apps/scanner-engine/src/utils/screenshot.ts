@@ -2,6 +2,17 @@ import { Page } from "playwright";
 import * as fs from "fs";
 import * as path from "path";
 import { AccessibilityViolation } from "../types";
+import { v4 as uuidv4 } from "uuid";
+export interface ScreenshotPaths {
+  original?: {
+    path: string;
+    name: string;
+  };
+  violations?: {
+    path: string;
+    name: string;
+  };
+}
 
 export class ScreenshotManager {
   async takeScreenshots(
@@ -11,17 +22,23 @@ export class ScreenshotManager {
     violations: AccessibilityViolation[],
     possibleViolations: AccessibilityViolation[],
     highlightViolations: boolean
-  ): Promise<void> {
-    console.log("saving screenshots", jobId);
+  ): Promise<ScreenshotPaths> {
     const screenshotDir = path.join(outputDir, "screenshots");
     if (!fs.existsSync(screenshotDir)) {
       fs.mkdirSync(screenshotDir, { recursive: true });
     }
 
+    const screenshotPaths: ScreenshotPaths = {};
+
     // Take regular screenshot first
-    const screenshotPath = path.join(screenshotDir, `${jobId}.png`);
+    const imageId = uuidv4() + jobId;
+    const screenshotPath = path.join(screenshotDir, `${imageId}.png`);
     await page.screenshot({ path: screenshotPath, fullPage: true });
     console.log(`📸 Screenshot saved: ${screenshotPath}`);
+    screenshotPaths.original = {
+      path: screenshotPath,
+      name: `${imageId}.png`,
+    };
 
     // Take highlighted screenshot if there are violations and option is enabled
     if (
@@ -35,11 +52,17 @@ export class ScreenshotManager {
       );
       const highlightedPath = path.join(
         screenshotDir,
-        `${jobId}_violations.png`
+        `${imageId}_violations.png`
       );
       await page.screenshot({ path: highlightedPath, fullPage: true });
       console.log(`🔴 Violations screenshot saved: ${highlightedPath}`);
+      screenshotPaths.violations = {
+        path: highlightedPath,
+        name: `${imageId}_violations.png`,
+      };
     }
+
+    return screenshotPaths;
   }
 
   private async highlightViolatedElements(

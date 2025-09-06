@@ -1,3 +1,5 @@
+import { AccessibilityViolation } from "@beacon/db";
+
 export interface ScanOptions {
   timeout?: number;
   waitUntil?: "load" | "domcontentloaded" | "networkidle";
@@ -21,9 +23,9 @@ export interface ScanOptions {
   localStorage?: Record<string, string>;
 }
 
-export interface AccessibilityViolation {
+export interface AccessibilityViolation2 {
   id: string;
-  impact: "minor" | "moderate" | "serious" | "critical";
+  impact: "MINOR" | "MODERATE" | "SERIOUS" | "CRITICAL";
   description: string;
   help: string;
   helpUrl: string;

@@ -1,4 +1,4 @@
-import { AccessibilityViolation } from "../types";
+import { AccessibilityViolation } from "@beacon/db";
 
 export interface PriorityFactor {
   score: number;
@@ -15,14 +15,15 @@ export interface PriorityScoreFactors {
 }
 
 export interface ViolationPriorityScore {
-  violationId: string;
+  ruleId: string;
+  id: string;
   factors: PriorityScoreFactors;
   totalScore: number;
   recommendation: string;
   explanation: string;
   detailedExplanation: string;
   technicalRecommendation: string;
-  priority: "Critical" | "High" | "Medium" | "Low";
+  priority: "URGENT" | "HIGH" | "MEDIUM" | "LOW";
 }
 
 export interface BatchPriorityResult {

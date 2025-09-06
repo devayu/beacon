@@ -46,6 +46,16 @@ export interface ScanResult {
     userAgent: string;
     viewport: { width: number; height: number };
   };
+  screenshotPaths?: {
+    original?: {
+      path: string;
+      name: string;
+    };
+    violations?: {
+      path: string;
+      name: string;
+    };
+  };
 }
 
 export interface DarkModeInfo {

@@ -24,6 +24,8 @@
   "dependencies": {
     "@beacon/logger": "*",
     "@beacon/redis": "*",
+    "@beacon/db": "*",
+    "uploadthing": "^7.4.0",
     "axe-core": "^4.10.3",
     "bullmq": "^5.58.2",
     "dotenv": "^17.2.1",

@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import OpenAI from "openai";
 import {
-  AccessibilityViolation,
+  // AccessibilityViolation,
   AIProviderConfig,
   BatchPriorityResult,
   PriorityScoreFactors,
@@ -10,6 +10,7 @@ import {
 } from "../types";
 import { getSystemPrompt, buildBatchPrompt } from "../utils/prompt";
 import { logger } from "@beacon/logger";
+import { AccessibilityViolation } from "@beacon/db";
 
 export class PriorityScorer {
   private openai: OpenAI;
@@ -146,7 +147,8 @@ export class PriorityScorer {
         const totalScore = this.calculateTotalScore(scoreData.factors);
 
         return {
-          violationId: violation.id,
+          id: violation.id,
+          ruleId: violation.ruleId,
           factors: scoreData.factors,
           totalScore,
           recommendation:
@@ -190,11 +192,11 @@ export class PriorityScorer {
 
   private determinePriority(
     totalScore: number
-  ): "Critical" | "High" | "Medium" | "Low" {
-    if (totalScore >= 8.5) return "Critical";
-    if (totalScore >= 7) return "High";
-    if (totalScore >= 5) return "Medium";
-    return "Low";
+  ): "URGENT" | "HIGH" | "MEDIUM" | "LOW" {
+    if (totalScore >= 8.5) return "URGENT";
+    if (totalScore >= 7) return "HIGH";
+    if (totalScore >= 5) return "MEDIUM";
+    return "LOW";
   }
 
   private createDefaultScore(
@@ -220,7 +222,8 @@ export class PriorityScorer {
     const totalScore = this.calculateTotalScore(factors);
 
     return {
-      violationId: violation.id,
+      id: violation.id,
+      ruleId: violation.ruleId,
       factors,
       totalScore,
       recommendation: `Fix the ${violation.id} issue`,
@@ -270,12 +273,12 @@ export class PriorityScorer {
   ): BatchPriorityResult {
     const summary = {
       totalViolations: violationScores.length,
-      criticalCount: violationScores.filter((v) => v.priority === "Critical")
+      criticalCount: violationScores.filter((v) => v.priority === "URGENT")
         .length,
-      highCount: violationScores.filter((v) => v.priority === "High").length,
-      mediumCount: violationScores.filter((v) => v.priority === "Medium")
+      highCount: violationScores.filter((v) => v.priority === "HIGH").length,
+      mediumCount: violationScores.filter((v) => v.priority === "MEDIUM")
         .length,
-      lowCount: violationScores.filter((v) => v.priority === "Low").length,
+      lowCount: violationScores.filter((v) => v.priority === "LOW").length,
       averageScore:
         violationScores.reduce((sum, v) => sum + v.totalScore, 0) /
           violationScores.length || 0,
@@ -283,7 +286,7 @@ export class PriorityScorer {
 
     // Sort by priority and total score
     const sortedViolations = violationScores.sort((a, b) => {
-      const priorityOrder = { Critical: 4, High: 3, Medium: 2, Low: 1 };
+      const priorityOrder = { URGENT: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
       const priorityDiff =
         priorityOrder[b.priority] - priorityOrder[a.priority];
       return priorityDiff !== 0 ? priorityDiff : b.totalScore - a.totalScore;
@@ -291,11 +294,11 @@ export class PriorityScorer {
 
     const recommendations = {
       immediate: sortedViolations
-        .filter((v) => v.priority === "Critical")
+        .filter((v) => v.priority === "URGENT")
         .slice(0, 3)
         .map((v) => v.recommendation),
       shortTerm: sortedViolations
-        .filter((v) => v.priority === "High")
+        .filter((v) => v.priority === "HIGH")
         .slice(0, 5)
         .map((v) => v.recommendation),
       longTerm: sortedViolations

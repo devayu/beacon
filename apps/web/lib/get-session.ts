@@ -1,7 +1,8 @@
+import "server-only";
 import { unauthorized } from "next/navigation";
 import { auth } from "./auth"; // path to your Better Auth server instance
 import { headers } from "next/headers";
-
+import { cache } from "react";
 export const getServerSession = async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -14,8 +15,8 @@ export const getServerUser = async () => {
   return session?.user;
 };
 
-export const checkUnauthorizedAccess = async () => {
+export const checkUnauthorizedAccess = cache(async () => {
   const user = await getServerUser();
   if (!user) return unauthorized();
   return user;
-};
+});
