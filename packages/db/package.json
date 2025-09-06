@@ -19,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@beacon/logger": "*",
+    "@beacon/logger": "workspace:*",
     "@prisma/client": "^6.0.0"
   },
   "devDependencies": {
