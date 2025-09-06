@@ -6,23 +6,25 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "dev": "npm run build && node build/index.js",
-    "dev:watch": "nodemon --watch src --ext ts --exec \"npm run build && node build/index.js\"",
+    "dev": "pnpm run build && node build/index.js",
+    "dev:watch": "nodemon --watch src --ext ts --exec \"pnpm run build && node build/index.js\"",
     "start": "node build/index.js",
     "clean": "rm -rf build",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run clean && pnpm run build"
+    "prepublishOnly": "pnpm run clean && pnpm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@beacon/logger": "*",
-    "@beacon/db": "*",
-    "@beacon/redis": "*",
+    "uuid": "^11.1.0",
+    "@beacon/logger": "workspace:*",
+    "@beacon/db": "workspace:*",
+    "@beacon/redis": "workspace:*",
     "@google/genai": "^1.16.0",
     "bullmq": "^5.58.2",
     "dotenv": "^17.2.1",

@@ -2,9 +2,6 @@ import { logger } from "@beacon/logger";
 import { UTApi } from "uploadthing/server";
 import { readFileSync, unlinkSync } from "fs";
 import { config } from "../config";
-import { ScanResult } from "../types";
-import { S } from "@upstash/qstash/client-CYwLcEcQ";
-
 export class UploadThingStorageService {
   private utapi: UTApi;
 
@@ -27,7 +24,7 @@ export class UploadThingStorageService {
       logger.info(`Uploading screenshot to UploadThing: ${fileName}`);
 
       // Create File object from buffer
-      const file = new File([fileBuffer], fileName, {
+      const file = new File([fileBuffer as any], fileName, {
         type: "image/png",
       });
 
