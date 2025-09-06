@@ -25,11 +25,6 @@ const clashDisplay = localFont({
   variable: "--font-serif",
   display: "swap",
   src: [
-    // {
-    //   path: "../public/fonts/ClashDisplay-Variable.woff2",
-    //   weight: "200 700",
-    //   style: "normal",
-    // },
     {
       path: "../public/fonts/ClashGrotesk-Variable.woff2",
       weight: "200 700",
