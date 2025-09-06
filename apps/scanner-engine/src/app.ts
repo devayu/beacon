@@ -1,8 +1,8 @@
-import { logger } from "./services/logger";
-import { getRedisConnection, closeRedisConnection } from "./services/redis";
+import { logger } from "@beacon/logger";
+import { getRedisConnection, closeRedisConnection } from "@beacon/redis";
 import { getScanWorker } from "./worker/scan-worker";
 import { getQueueService } from "./services/queue";
-
+import { config } from "./config";
 export class ScannerEngineApp {
   private scanWorker: ReturnType<typeof getScanWorker> | null = null;
   private queueService: ReturnType<typeof getQueueService> | null = null;
@@ -12,7 +12,7 @@ export class ScannerEngineApp {
     try {
       logger.info("Starting Scanner Engine...");
 
-      const redis = getRedisConnection();
+      const redis = getRedisConnection(config.redis);
       await redis.ping();
       logger.info("Redis connection established");
 

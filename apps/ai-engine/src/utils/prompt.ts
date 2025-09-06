@@ -1,12 +1,12 @@
-import { AccessibilityViolation, ViolationContext } from "../types";
-
+import { AccessibilityViolation } from "@beacon/db";
+import { ViolationContext } from "../types";
 
 export function buildBatchPrompt(
-    violations: AccessibilityViolation[],
-    context?: ViolationContext
-  ): string {
-    const contextInfo = context
-      ? `
+  violations: AccessibilityViolation[],
+  context?: ViolationContext
+): string {
+  const contextInfo = context
+    ? `
 **PAGE CONTEXT:**
 - URL: ${context.url}
 - Industry: ${context.industry || "General"}
@@ -14,11 +14,11 @@ export function buildBatchPrompt(
 - Page Title: ${context.pageTitle || "Unknown"}
 - Viewport: ${context.viewport?.width || 1920}x${context.viewport?.height || 1080}
 `
-      : "";
+    : "";
 
-    const violationsText = violations
-      .map((violation, index) => {
-        return `
+  const violationsText = violations
+    .map((violation, index) => {
+      return `
 **VIOLATION ${index + 1}:**
 - ID: ${violation.id}
 - Impact: ${violation.impact}
@@ -26,13 +26,13 @@ export function buildBatchPrompt(
 - Help: ${violation.help}
 - Help URL: ${violation.helpUrl}
 - Elements affected: ${violation.nodes.length}
-- Sample element: ${violation.nodes[0]?.html || "N/A"}
-- Sample target: ${violation.nodes[0]?.target?.join(", ") || "N/A"}
-- Failure summary: ${violation.nodes[0]?.failureSummary || "N/A"}`;
-      })
-      .join("\n");
+- Sample element: ${(violation.nodes[0] as any)?.html || "N/A"}
+- Sample target: ${(violation.nodes[0] as any)?.target?.join(", ") || "N/A"}
+- Failure summary: ${(violation.nodes[0] as any)?.failureSummary || "N/A"}`;
+    })
+    .join("\n");
 
-    return `${getSystemPrompt()}
+  return `${getSystemPrompt()}
 
 ${contextInfo}
 
@@ -59,9 +59,9 @@ Structure each object like:
 }
 
 CRITICAL: Return ONLY JSON.stringify(yourArrayObject). Nothing else. No markdown. No explanations.`;
-  }
+}
 export function getSystemPrompt(): string {
-    return `You are an accessibility expert. Score violations on 6 factors (1-10 scale) and provide user-friendly explanations.
+  return `You are an accessibility expert. Score violations on 6 factors (1-10 scale) and provide user-friendly explanations.
 
 SCORING (simple guidelines):
 - IMPACT: How much this hurts users (10=stops them completely, 1=minor annoyance)
@@ -78,4 +78,4 @@ RESPONSE REQUIREMENTS:
 4. technicalRecommendation: Include specific code examples and technical steps
 
 CRITICAL: Return ONLY JSON.stringify(yourArrayObject). No markdown. No code blocks. No explanations.`;
-  }
+}

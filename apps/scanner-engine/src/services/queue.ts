@@ -1,7 +1,7 @@
 import { Job, Queue, QueueEvents, Worker } from "bullmq";
 import { config } from "../config";
-import { getRedisConnection } from "./redis";
-import { logger } from "./logger";
+import { getRedisConnection } from "@beacon/redis";
+import { logger } from "@beacon/logger";
 import { ScanJobData, ScanJobResult } from "../types/job";
 
 export class QueueService {
@@ -9,8 +9,8 @@ export class QueueService {
   private queueEvents: QueueEvents;
 
   constructor() {
-    const connection = getRedisConnection();
-    
+    const connection = getRedisConnection(config.redis);
+
     this.queue = new Queue<ScanJobData, ScanJobResult>(config.redis.queueId, {
       connection,
       defaultJobOptions: {
@@ -47,7 +47,10 @@ export class QueueService {
     });
   }
 
-  async addScanJob(jobName: string, data: ScanJobData): Promise<Job<ScanJobData, ScanJobResult>> {
+  async addScanJob(
+    jobName: string,
+    data: ScanJobData
+  ): Promise<Job<ScanJobData, ScanJobResult>> {
     try {
       const job = await this.queue.add(jobName, data);
       logger.info(`Added scan job ${job.id} for URL: ${data.url}`);
@@ -58,7 +61,9 @@ export class QueueService {
     }
   }
 
-  async getJob(jobId: string): Promise<Job<ScanJobData, ScanJobResult> | undefined> {
+  async getJob(
+    jobId: string
+  ): Promise<Job<ScanJobData, ScanJobResult> | undefined> {
     return this.queue.getJob(jobId);
   }
 

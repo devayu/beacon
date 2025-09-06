@@ -18,6 +18,7 @@
   --muted: oklch(0.967 0.0029 264.5419);
   --muted-foreground: oklch(0.551 0.0234 264.3637);
   --accent: oklch(0.9521 0 0);
+  --accent-green: oklch(65.27% 0.19475208481592465 145.49499828552752);
   --accent-foreground: oklch(0.6447 0.241 27.376);
   --destructive: oklch(0.6368 0.2078 25.3313);
   --destructive-foreground: oklch(0.2011 0.0039 286.0396);
@@ -72,6 +73,7 @@
   --muted: oklch(0.252 0 0);
   --muted-foreground: oklch(0.6268 0 0);
   --accent: oklch(0.3012 0 0);
+  --accent-green: oklch(65.27% 0.19475208481592465 145.49499828552752);
   --accent-foreground: oklch(0.6447 0.241 27.376);
   --destructive: oklch(0.6447 0.241 27.376);
   --destructive-foreground: oklch(0.1797 0.0043 308.1928);
@@ -123,6 +125,7 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
+  --color-accent-green: var(--accent-green);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
@@ -360,7 +363,7 @@
 
 body {
   letter-spacing: var(--tracking-normal);
-  font-family:sans-serif
+  font-family: sans-serif;
 }
 
 @layer base {

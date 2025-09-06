@@ -4,6 +4,7 @@ export interface ScanJobData {
   url: string;
   options?: ScanOptions;
   jobId?: string;
+  jobDbId: string;
   statusId?: string;
   timestamp?: string;
 }
@@ -25,13 +26,11 @@ export interface ScanJobResult {
 
 export interface JobProgress {
   step:
-    | "starting"
-    | "scanning"
-    | "screenshots"
-    | "queue-ai"
-    | "scoring"
-    | "completed"
-    | "failed";
+    | "SCANNING"
+    | "PROCESSING_SCREENSHOTS"
+    | "SCAN_COMPLETE"
+    | "AI_QUEUED"
+    | "FAILED";
   progress: number;
   message?: string;
 }

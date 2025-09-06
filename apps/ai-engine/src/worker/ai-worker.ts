@@ -1,16 +1,16 @@
 import { Job, Worker } from "bullmq";
-import { getRedisConnection } from "../services/redis";
-import { logger } from "../services/logger";
+import { getRedisConnection, Redis, setCache } from "@beacon/redis";
+import { logger } from "@beacon/logger";
 import { getPriorityScorer } from "../services/priority-scorer";
-import { AccessibilityViolation } from "../types";
-import Redis from "ioredis";
-import { config } from "../config/index";
+import { config } from "../config";
+import { AccessibilityViolation, prisma } from "@beacon/db";
 
 interface AIJobData {
   scanJobId: string;
   violations: AccessibilityViolation[];
   url: string;
   statusId?: string;
+  jobDbId: string;
 }
 
 interface AIJobResult {
@@ -31,14 +31,14 @@ export class AIWorker {
 
   constructor() {
     this.scorer = getPriorityScorer();
-    this.redisConnection = getRedisConnection();
+    this.redisConnection = getRedisConnection(config.redis);
 
     this.worker = new Worker<AIJobData, AIJobResult>(
       config.redis.queueId,
       this.processJob.bind(this),
       {
         connection: this.redisConnection,
-        concurrency: config.worker.concurrency
+        concurrency: config.worker.concurrency,
       }
     );
 
@@ -72,16 +72,18 @@ export class AIWorker {
   ): Promise<void> {
     try {
       const progressData = { step, progress, message };
-      await this.redisConnection.set(statusId, JSON.stringify(progressData));
+      await setCache(statusId, progressData, 7200);
       logger.debug(`Updated scan job progress: ${step} (${progress}%)`);
     } catch (error) {
       logger.warn(`Failed to update scan job progress:`, error);
     }
   }
 
-  private async processJob(job: Job<AIJobData, AIJobResult>): Promise<AIJobResult> {
+  private async processJob(
+    job: Job<AIJobData, AIJobResult>
+  ): Promise<AIJobResult> {
     const startTime = Date.now();
-    const { scanJobId, violations, url, statusId } = job.data;
+    const { scanJobId, url, statusId, jobDbId } = job.data;
 
     logger.info(`Processing AI job ${job.id} for scan job ${scanJobId}`);
 
@@ -89,37 +91,101 @@ export class AIWorker {
       if (statusId) {
         await this.updateScanJobProgress(
           statusId,
-          "ai-processing",
+          "AI_PROCESSING",
           80,
           "Analyzing violations with AI..."
         );
       }
 
+      const violations = await prisma.accessibilityViolation.findMany({
+        where: {
+          scanJobId: jobDbId,
+        },
+      });
       const priorityScores = await this.scorer.createPriorityScore(violations);
+
+      await prisma.$transaction(async (tx) => {
+        // Validate data before processing
+        if (
+          !priorityScores.violations ||
+          priorityScores.violations.length === 0
+        ) {
+          logger.warn("No violations to process in priority scores");
+          return;
+        }
+
+        // Create explanations in batch if any violations have explanations
+        const explanationsToCreate = priorityScores.violations
+          .filter(
+            (v) =>
+              v.detailedExplanation &&
+              v.technicalRecommendation &&
+              v.explanation &&
+              v.ruleId
+          )
+          .map((v) => ({
+            detailedExplanation: v.detailedExplanation,
+            recommendation: v.technicalRecommendation,
+            explanation: v.explanation,
+            issueCode: v.ruleId,
+          }));
+
+        if (explanationsToCreate.length > 0) {
+          try {
+            await tx.explanation.createMany({
+              data: explanationsToCreate,
+              skipDuplicates: true,
+            });
+            logger.info(`Created ${explanationsToCreate.length} explanations`);
+          } catch (error) {
+            logger.error("Failed to create explanations:", error);
+            // Don't throw here as explanations are supplementary
+          }
+        }
+
+        // Update violations in batch using updateMany for better performance
+        const violationUpdates = priorityScores.violations.map((v) => ({
+          id: v.id,
+          priorityScore: v.totalScore,
+        }));
+
+        // Process updates in batches to avoid query size limits
+        const batchSize = 100;
+        for (let i = 0; i < violationUpdates.length; i += batchSize) {
+          const batch = violationUpdates.slice(i, i + batchSize);
+
+          // Use Promise.all for parallel execution within each batch
+          await Promise.all(
+            batch.map(async (update) => {
+              try {
+                await tx.accessibilityViolation.update({
+                  where: {
+                    id: update.id,
+                    scanJobId: job.data.jobDbId,
+                  },
+                  data: {
+                    priorityScore: update.priorityScore,
+                  },
+                });
+              } catch (error) {
+                logger.error(`Failed to update violation ${update.id}:`, error);
+                // Continue with other updates even if one fails
+              }
+            })
+          );
+        }
+
+        logger.info(
+          `Updated priority scores for ${violationUpdates.length} violations`
+        );
+      });
 
       if (statusId) {
         await this.updateScanJobProgress(
           statusId,
-          "completed",
+          "COMPLETED",
           100,
           "Analysis completed successfully"
-        );
-
-        // Store final result in Redis for the web app to fetch
-        await this.redisConnection.set(
-          `scan-result:${scanJobId}`,
-          JSON.stringify({
-            success: true,
-            result: { violations, url },
-            priorityScores,
-            metadata: {
-              processingTime: Date.now() - startTime,
-              timestamp: new Date().toISOString(),
-              workerVersion: "1.0.0",
-            },
-          }),
-          "EX", 
-          3600 // Expire after 1 hour
         );
       }
 

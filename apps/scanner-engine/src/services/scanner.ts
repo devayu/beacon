@@ -1,7 +1,7 @@
 import { AxeBuilder } from "@axe-core/playwright";
 import { ScanOptions, ScanResult, AccessibilityViolation } from "../types";
 import { BrowserManager } from "../utils/browser";
-import { ScreenshotManager } from "../utils/screenshot";
+import { ScreenshotManager, ScreenshotPaths } from "../utils/screenshot";
 import { ReportManager } from "../utils/report";
 import { DarkModeDetector } from "../utils/dark-mode";
 
@@ -66,12 +66,13 @@ export class AccessibilityScanner {
 
       const results = await axeBuilder.analyze();
 
+      let screenshotPaths: ScreenshotPaths = {};
       if (screenshot) {
         const violations = this.normalizeViolations(results.violations);
         const possibleViolations =
           results.incomplete as AccessibilityViolation[];
 
-        await this.screenshotManager.takeScreenshots(
+        screenshotPaths = await this.screenshotManager.takeScreenshots(
           page,
           jobId,
           outputDir,
@@ -96,6 +97,7 @@ export class AccessibilityScanner {
           userAgent: userAgentString,
           viewport,
         },
+        screenshotPaths,
       };
 
       return scanResult;

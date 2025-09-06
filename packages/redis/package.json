@@ -1,0 +1,27 @@
+{
+  "name": "@beacon/redis",
+  "version": "1.0.0",
+  "description": "Shared Redis connection utility for Beacon services",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rm -rf build",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "redis",
+    "beacon",
+    "shared"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ioredis": "^5.7.0",
+    "@beacon/logger": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

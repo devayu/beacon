@@ -1,7 +1,8 @@
-import { logger } from "./services/logger";
-import { getRedisConnection, closeRedisConnection } from "./services/redis";
+import { logger } from "@beacon/logger";
+import { getRedisConnection, closeRedisConnection } from "@beacon/redis";
 import { getAIWorker } from "./worker/ai-worker";
 import { getPriorityScorer } from "./services/priority-scorer";
+import { config } from "./config";
 
 export class AIEngineApp {
   private aiWorker: ReturnType<typeof getAIWorker> | null = null;
@@ -12,7 +13,7 @@ export class AIEngineApp {
     try {
       logger.info("Starting AI Engine...");
 
-      const redis = getRedisConnection();
+      const redis = getRedisConnection(config.redis);
       await redis.ping();
       logger.info("Redis connection established");
 
@@ -83,7 +84,7 @@ export class AIEngineApp {
   getAIWorker() {
     return this.aiWorker;
   }
-  
+
   getScorerService() {
     return this.scorerService;
   }

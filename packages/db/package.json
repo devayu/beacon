@@ -1,0 +1,30 @@
+{
+  "name": "@beacon/db",
+  "version": "1.0.0",
+  "description": "Shared database connection and models for Beacon services",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rm -rf build",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio"
+  },
+  "keywords": ["database", "prisma", "beacon", "shared"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@beacon/logger": "*",
+    "@prisma/client": "^6.0.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

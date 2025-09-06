@@ -7,15 +7,18 @@ export class ReportManager {
     const report: Report = {
       summary: {
         totalUrls: results.length,
-        totalViolations: results.reduce((sum, r) => sum + r.violations.length, 0),
+        totalViolations: results.reduce(
+          (sum, r) => sum + r.violations.length,
+          0
+        ),
         criticalViolations: results.reduce(
           (sum, r) =>
-            sum + r.violations.filter((v) => v.impact === "critical").length,
+            sum + r.violations.filter((v) => v.impact === "CRITICAL").length,
           0
         ),
         seriousViolations: results.reduce(
           (sum, r) =>
-            sum + r.violations.filter((v) => v.impact === "serious").length,
+            sum + r.violations.filter((v) => v.impact === "SERIOUS").length,
           0
         ),
         averageViolationsPerPage:
@@ -40,11 +43,11 @@ export class ReportManager {
   private saveReport(report: Report, outputPath: string): void {
     const reportJson = JSON.stringify(report, null, 2);
     const dir = path.dirname(outputPath);
-    
+
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    
+
     fs.writeFileSync(outputPath, reportJson);
     console.log(`📄 Report saved to: ${outputPath}`);
   }
@@ -56,10 +59,10 @@ export class ReportManager {
     results.forEach((result, index) => {
       const { url, violations } = result;
       const criticalCount = violations.filter(
-        (v) => v.impact === "critical"
+        (v) => v.impact === "CRITICAL"
       ).length;
       const seriousCount = violations.filter(
-        (v) => v.impact === "serious"
+        (v) => v.impact === "SERIOUS"
       ).length;
 
       console.log(`\n${index + 1}. ${url}`);
@@ -75,7 +78,7 @@ export class ReportManager {
     );
     const totalCritical = results.reduce(
       (sum, r) =>
-        sum + r.violations.filter((v) => v.impact === "critical").length,
+        sum + r.violations.filter((v) => v.impact === "CRITICAL").length,
       0
     );
 

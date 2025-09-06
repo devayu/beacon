@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ScanStatus {
+  PENDING
+  SCANNING
+  PROCESSING_SCREENSHOTS
+  SCAN_COMPLETE
+  AI_QUEUED
+  AI_PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum ViolationImpact {
+  MINOR
+  MODERATE
+  SERIOUS
+  CRITICAL
+}
+
+enum PriorityLevel {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum Plan {
+  FREE
+  PREMIUM
+}
+
+model ScanJob {
+  id                       String     @id @default(cuid())
+  routeId                  String
+  status                   ScanStatus @default(PENDING)
+  result                   Json?
+  priority                 Json?
+  userId                   String?
+  screenshotUrl            String?
+  violationsScreenshotUrl  String?
+  createdAt                DateTime   @default(now())
+  updatedAt                DateTime   @updatedAt
+  completedAt              DateTime?
+  error                    String?
+
+  violations AccessibilityViolation[]
+  route      Route                    @relation(fields: [routeId], references: [id])
+
+  @@map("scan_job")
+}
+
+model AccessibilityViolation {
+  id            String          @id @default(cuid())
+  scanJobId     String
+  ruleId        String
+  impact        ViolationImpact
+  description   String
+  help          String
+  helpUrl       String
+  priority      PriorityLevel
+  nodes         Json[]
+  createdAt     DateTime        @default(now())
+  priorityScore Int
+
+  scanJob ScanJob @relation(fields: [scanJobId], references: [id], onDelete: Cascade)
+
+  @@map("accessibility_violation")
+}
+
+model Route {
+  id        String    @id @default(cuid())
+  userId    String
+  url       String
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id])
+  ScanJob   ScanJob[]
+
+  @@map("route")
+}
+
+model Explanation {
+  id                  String @id @default(cuid())
+  issueCode           String @unique
+  explanation         String
+  detailedExplanation String
+  recommendation      String
+
+  @@map("explanation")
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  routes        Route[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@map("verification")
+}
