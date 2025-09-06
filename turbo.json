@@ -7,7 +7,7 @@
   "tasks": {
     "db:generate": {
       "inputs": [".env*"],
-      "outputs": ["packages/db/node_modules/.prisma/client/**"],
+      "outputs": ["packages/db/src/generated/prisma/**"],
       "env": ["DATABASE_URL"]
     },
     "build": {
