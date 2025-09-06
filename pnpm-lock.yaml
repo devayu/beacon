@@ -54,6 +54,9 @@ importers:
 
   apps/scanner-engine:
     dependencies:
+      '@axe-core/playwright':
+        specifier: ^4.10.2
+        version: 4.10.2(playwright-core@1.55.0)
       '@beacon/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -72,6 +75,9 @@ importers:
       dotenv:
         specifier: ^17.2.1
         version: 17.2.2
+      playwright:
+        specifier: ^1.55.0
+        version: 1.55.0
       uploadthing:
         specifier: ^7.4.0
         version: 7.7.4
@@ -79,18 +85,12 @@ importers:
         specifier: ^11.1.0
         version: 11.1.0
     devDependencies:
-      '@axe-core/playwright':
-        specifier: ^4.10.2
-        version: 4.10.2(playwright-core@1.55.0)
       '@types/uuid':
         specifier: ^10.0.0
         version: 10.0.0
       nodemon:
         specifier: ^3.1.10
         version: 3.1.10
-      playwright:
-        specifier: ^1.55.0
-        version: 1.55.0
       typescript:
         specifier: ^5.0.0
         version: 5.9.2
