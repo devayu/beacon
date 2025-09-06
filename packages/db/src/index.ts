@@ -1,4 +1,4 @@
-import { PrismaClient } from "./generated/prisma";
+import { PrismaClient } from "../generated/prisma";
 import { logger } from "@beacon/logger";
 
 declare global {
@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === "production") {
 // Remove query logging for now to avoid TypeScript issues
 
 export { prisma };
-export * from "./generated/prisma";
+export * from "../generated/prisma";
 
 export const connectDB = async (): Promise<void> => {
   try {
