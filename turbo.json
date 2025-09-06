@@ -1,13 +1,11 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "tui",
-  "globalEnv": [
-    "NODE_ENV"
-  ],
+  "globalEnv": ["NODE_ENV"],
   "tasks": {
     "db:generate": {
       "inputs": [".env*"],
-      "outputs": ["packages/db/src/generated/prisma/**"],
+      "outputs": ["packages/db/generated/prisma/**"],
       "env": ["DATABASE_URL"]
     },
     "build": {
@@ -17,7 +15,7 @@
       "env": [
         "DATABASE_URL",
         "UPSTASH_REDIS_URL",
-        "UPSTASH_REDIS_REST_URL", 
+        "UPSTASH_REDIS_REST_URL",
         "UPSTASH_REDIS_REST_TOKEN",
         "REDIS_QUEUE_ID",
         "REDIS_AI_QUEUE_ID",
@@ -30,7 +28,11 @@
       ]
     },
     "ai-engine#build": {
-      "dependsOn": ["@beacon/db#build", "@beacon/logger#build", "@beacon/redis#build"],
+      "dependsOn": [
+        "@beacon/db#build",
+        "@beacon/logger#build",
+        "@beacon/redis#build"
+      ],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["build/**"],
       "env": [
@@ -41,7 +43,11 @@
       ]
     },
     "scanner-engine#build": {
-      "dependsOn": ["@beacon/db#build", "@beacon/logger#build", "@beacon/redis#build"],
+      "dependsOn": [
+        "@beacon/db#build",
+        "@beacon/logger#build",
+        "@beacon/redis#build"
+      ],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["build/**"],
       "env": [
@@ -53,7 +59,11 @@
       ]
     },
     "web#build": {
-      "dependsOn": ["@beacon/db#build", "@beacon/logger#build", "@beacon/redis#build"],
+      "dependsOn": [
+        "@beacon/db#build",
+        "@beacon/logger#build",
+        "@beacon/redis#build"
+      ],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"],
       "env": [
@@ -92,7 +102,7 @@
       "env": [
         "DATABASE_URL",
         "UPSTASH_REDIS_URL",
-        "UPSTASH_REDIS_REST_URL", 
+        "UPSTASH_REDIS_REST_URL",
         "UPSTASH_REDIS_REST_TOKEN",
         "REDIS_QUEUE_ID",
         "REDIS_AI_QUEUE_ID",
