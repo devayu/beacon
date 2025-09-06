@@ -54,7 +54,7 @@ export default function Dashboard({ routes }: { routes: Route[] }) {
       } else {
         toast.success("Scan started successfully!");
         // Start polling with the returned statusId
-        startPolling(res.statusId);
+        startPolling(res?.statusId!);
       }
     } catch (err) {
       toast.error("Failed to start scan");
@@ -112,46 +112,6 @@ export default function Dashboard({ routes }: { routes: Route[] }) {
       </form>
 
       <RouteList routes={routes}></RouteList>
-
-      {/* Scan Form */}
-      <div className="flex gap-4 items-center mb-6">
-        <Input
-          type="url"
-          placeholder="Enter URL to scan"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          disabled={isScanning}
-          className="flex-1"
-        />
-        <IconButton
-          onClick={handleScan}
-          disabled={isScanning || !url.trim()}
-          className="min-w-[100px]"
-        >
-          {isScanning ? "Scanning..." : "Scan"}
-        </IconButton>
-      </div>
-
-      {/* Error Display */}
-      {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-red-700 text-sm">{error}</p>
-        </div>
-      )}
-
-      {/* Progress Display */}
-      {status && isPolling && (
-        <ProgressDisplay status={status} isLoading={isLoading} />
-      )}
-
-      {/* Scan Completed Message */}
-      {status && !isPolling && status.progress >= 100 && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-md">
-          <p className="text-green-700 text-sm">
-            Scan completed! Results will appear below after page refresh.
-          </p>
-        </div>
-      )}
     </div>
   );
 }

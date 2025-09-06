@@ -41,6 +41,7 @@ export interface BatchPriorityResult {
     shortTerm: string[];
     longTerm: string[];
   };
+  transformedResult?: TransformedViolationResult[];
 }
 
 export interface ViolationContext {
@@ -63,4 +64,12 @@ export interface AIProviderConfig {
   model: string;
   temperature: number;
   maxTokens?: number;
+}
+
+export interface TransformedViolationResult {
+  ruleId: string;
+  explanation: string;
+  detailedExplanation: string;
+  recommendation: string;
+  priorityScore: number;
 }

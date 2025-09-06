@@ -34,8 +34,6 @@ export function useScanStatus(): UseScanStatusReturn {
       const response = await axios.get(`/api/jobs/${statusId}/status`);
 
       const statusData = response.data;
-      console.log(response, "resss");
-      console.log(statusData, "statusData");
       setStatus(statusData);
 
       // Stop polling if scan is complete (progress reaches 100)

@@ -15,7 +15,5 @@ export default async function OverviewPage({
     redirect("/dashboard");
   }
 
-  console.log(lastRuns, "lastRuns");
-
-  return <Overview lastRuns={lastRuns}></Overview>;
+  return <Overview lastRuns={lastRuns} />;
 }

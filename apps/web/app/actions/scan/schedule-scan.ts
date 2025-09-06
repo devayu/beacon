@@ -1,11 +1,11 @@
 "use server";
+import { scanQueue } from "@/app/redis/queue";
 import { ServerActionResponse } from "@/lib/error";
 import { checkUnauthorizedAccess } from "@/lib/get-session";
 import { prisma } from "@beacon/db";
 import { logger } from "@beacon/logger";
+import { delCache, setCache } from "@beacon/redis";
 import { v4 as uuidv4 } from "uuid";
-import { setCache, delCache } from "@beacon/redis";
-import { scanQueue } from "@/app/redis/queue";
 
 export const scheduleScan = async (
   id: string

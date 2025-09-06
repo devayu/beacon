@@ -5,6 +5,7 @@ import {
   AIProviderConfig,
   BatchPriorityResult,
   PriorityScoreFactors,
+  TransformedViolationResult,
   ViolationContext,
   ViolationPriorityScore,
 } from "../types";
@@ -307,11 +308,27 @@ export class PriorityScorer {
         .map((v) => v.recommendation),
     };
 
+    // Generate transformed result
+    const transformedResult = this.generateTransformedResult(sortedViolations);
+
     return {
       violations: sortedViolations,
       summary,
       recommendations,
+      transformedResult,
     };
+  }
+
+  private generateTransformedResult(
+    violationScores: ViolationPriorityScore[]
+  ): TransformedViolationResult[] {
+    return violationScores.map((violation) => ({
+      ruleId: violation.ruleId,
+      explanation: violation.explanation,
+      detailedExplanation: violation.detailedExplanation,
+      recommendation: violation.technicalRecommendation,
+      priorityScore: violation.totalScore,
+    }));
   }
 }
 
