@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -39,19 +39,19 @@ enum Plan {
 }
 
 model ScanJob {
-  id                       String     @id @default(cuid())
-  routeId                  String
-  status                   ScanStatus @default(PENDING)
-  result                   Json?
-  priority                 Json?
-  transformedResult        Json?
-  userId                   String?
-  screenshotUrl            String?
-  violationsScreenshotUrl  String?
-  createdAt                DateTime   @default(now())
-  updatedAt                DateTime   @updatedAt
-  completedAt              DateTime?
-  error                    String?
+  id                      String     @id @default(cuid())
+  routeId                 String
+  status                  ScanStatus @default(PENDING)
+  result                  Json?
+  priority                Json?
+  transformedResult       Json?
+  userId                  String?
+  screenshotUrl           String?
+  violationsScreenshotUrl String?
+  createdAt               DateTime   @default(now())
+  updatedAt               DateTime   @updatedAt
+  completedAt             DateTime?
+  error                   String?
 
   violations AccessibilityViolation[]
   route      Route                    @relation(fields: [routeId], references: [id])
