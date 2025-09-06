@@ -30,7 +30,7 @@
       ]
     },
     "ai-engine#build": {
-      "dependsOn": ["@beacon/db#build"],
+      "dependsOn": ["@beacon/db#build", "@beacon/logger#build", "@beacon/redis#build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["build/**"],
       "env": [
@@ -41,7 +41,7 @@
       ]
     },
     "scanner-engine#build": {
-      "dependsOn": ["@beacon/db#build"],
+      "dependsOn": ["@beacon/db#build", "@beacon/logger#build", "@beacon/redis#build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["build/**"],
       "env": [
@@ -53,7 +53,7 @@
       ]
     },
     "web#build": {
-      "dependsOn": ["@beacon/db#build"],
+      "dependsOn": ["@beacon/db#build", "@beacon/logger#build", "@beacon/redis#build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"],
       "env": [
@@ -65,10 +65,20 @@
       ]
     },
     "@beacon/db#build": {
-      "dependsOn": ["@beacon/db#db:generate"],
+      "dependsOn": ["@beacon/db#db:generate", "@beacon/logger#build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["build/**"],
       "env": ["DATABASE_URL"]
+    },
+    "@beacon/logger#build": {
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": ["build/**"]
+    },
+    "@beacon/redis#build": {
+      "dependsOn": ["@beacon/logger#build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["build/**"],
+      "env": ["UPSTASH_REDIS_URL"]
     },
     "lint": {
       "dependsOn": ["^lint"]
