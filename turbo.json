@@ -1,14 +1,33 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "tui",
+  "globalEnv": [
+    "NODE_ENV"
+  ],
   "tasks": {
     "db:generate": {
-      "outputs": ["node_modules/.prisma/**", "packages/db/node_modules/.prisma/**"]
+      "inputs": [".env*"],
+      "outputs": ["node_modules/.prisma/**"],
+      "env": ["DATABASE_URL"]
     },
     "build": {
       "dependsOn": ["^build", "^db:generate"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["build/**", "dist/**", ".next/**", "!.next/cache/**"]
+      "outputs": ["build/**", "dist/**", ".next/**", "!.next/cache/**"],
+      "env": [
+        "DATABASE_URL",
+        "UPSTASH_REDIS_URL",
+        "UPSTASH_REDIS_REST_URL", 
+        "UPSTASH_REDIS_REST_TOKEN",
+        "REDIS_QUEUE_ID",
+        "REDIS_AI_QUEUE_ID",
+        "REDIS_SCAN_QUEUE_ID",
+        "GEMINI_API_KEY",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "SUPABASE_URL",
+        "UPLOADTHING_TOKEN"
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -18,7 +37,21 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": [
+        "DATABASE_URL",
+        "UPSTASH_REDIS_URL",
+        "UPSTASH_REDIS_REST_URL", 
+        "UPSTASH_REDIS_REST_TOKEN",
+        "REDIS_QUEUE_ID",
+        "REDIS_AI_QUEUE_ID",
+        "REDIS_SCAN_QUEUE_ID",
+        "GEMINI_API_KEY",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "SUPABASE_URL",
+        "UPLOADTHING_TOKEN"
+      ]
     }
   }
 }
