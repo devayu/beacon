@@ -13,6 +13,10 @@ export interface Config {
       rejectUnauthorized: boolean;
     };
   };
+  model: {
+    openai: string;
+    gemini: string;
+  };
   worker: {
     concurrency: number;
     removeOnComplete: number;
@@ -37,6 +41,10 @@ export const config: Config = {
     tls: {
       rejectUnauthorized: false,
     },
+  },
+  model: {
+    openai: validateEnvVar("OPENAI_API_KEY"),
+    gemini: validateEnvVar("GEMINI_API_KEY"),
   },
   worker: {
     concurrency: 1,

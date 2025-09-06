@@ -11,7 +11,7 @@ import {
 import { getSystemPrompt, buildBatchPrompt } from "../utils/prompt";
 import { logger } from "@beacon/logger";
 import { AccessibilityViolation } from "@beacon/db";
-
+import { config as envConfig } from "../config";
 export class PriorityScorer {
   private openai: OpenAI;
   private genai: GoogleGenAI;
@@ -27,10 +27,10 @@ export class PriorityScorer {
     };
 
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+      apiKey: envConfig.model.openai,
     });
     this.genai = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY,
+      apiKey: envConfig.model.gemini,
     });
   }
 
