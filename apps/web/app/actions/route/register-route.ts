@@ -1,16 +1,16 @@
 "use server";
 import { ServerActionResponse } from "@/lib/error";
 import { checkUnauthorizedAccess } from "@/lib/get-session";
+import { RegisterRouteFormValues } from "@/lib/zod-schemas";
 import { prisma } from "@beacon/db";
 import { logger } from "@beacon/logger";
 import { revalidatePath } from "next/cache";
-
 export const registerRoute = async (
-  _: any,
-  formData: FormData
+  formData: RegisterRouteFormValues
 ): Promise<ServerActionResponse<{ id: string; registerdUrl: string }>> => {
   const user = await checkUnauthorizedAccess();
-  const url = formData.get("url") as string;
+  const { url, name, type } = formData;
+
   try {
     new URL(url);
   } catch {
@@ -33,6 +33,10 @@ export const registerRoute = async (
     data: {
       url: url,
       userId: user.id,
+      metadata: {
+        name,
+        type,
+      },
     },
   });
   revalidatePath("/");

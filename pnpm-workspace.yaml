@@ -1,5 +1,5 @@
 packages:
   # Apps
-  - 'apps/*'
+  - "apps/*"
   # Packages
-  - 'packages/*'
+  - "packages/*"

@@ -33,9 +33,10 @@ enum PriorityLevel {
   URGENT
 }
 
-enum Plan {
-  FREE
-  PREMIUM
+enum Tier {
+  T0
+  T1
+  T2
 }
 
 model ScanJob {
@@ -84,6 +85,7 @@ model Route {
   createdAt DateTime  @default(now())
   user      User      @relation(fields: [userId], references: [id])
   ScanJob   ScanJob[]
+  metadata  Json?
 
   @@map("route")
 }
@@ -109,6 +111,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   routes        Route[]
+  tier          Tier      @default(T0)
 
   @@unique([email])
   @@map("user")

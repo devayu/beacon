@@ -1,5 +1,27 @@
+import BeaconIcon from "@/components/beacon-icon";
 import SignInForm from "@/components/sign-in-form";
 
 export default async function SignInPage() {
-  return <SignInForm></SignInForm>;
+  return (
+    <div className="min-h-screen flex">
+      <div className="flex-1 flex items-center justify-center p-8 bg-sidebar">
+        <div className="w-full max-w-lg">
+          <div className=" mb-8">
+            <h1 className="text-4xl font-semibold mb-4 font-serif">
+              Accessibility Scanning Made Simple
+            </h1>
+            <p className="mb-6 font-sans text-muted-foreground">
+              Beacon scans your website for hidden accessibility issues,
+              highlights them visually, and gives clear, actionable fixes — all
+              in one place. Start improving accessibility in minutes.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 flex items-center justify-center p-8">
+        <SignInForm />
+      </div>
+    </div>
+  );
 }

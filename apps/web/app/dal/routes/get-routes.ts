@@ -10,6 +10,9 @@ export const getRegisteredRoutes = async () => {
       where: {
         userId: user?.id,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
     return routes;
   } catch (error) {
