@@ -56,7 +56,10 @@ const IconButton = (
     <Button
       variant={props.variant}
       {...props}
-      className="border-[1px] uppercase text-xs tracking-wider h-10 py-1 px-0 gap-0 cursor-pointer hover:border-[1px]"
+      className={cn(
+        "border-[1px] uppercase text-xs tracking-wider h-10 py-1 px-0 gap-0 cursor-pointer hover:border-[1px] font-sans",
+        props.className
+      )}
       ref={buttonRef}
     >
       <div className="p-4">{props.children}</div>

@@ -3,6 +3,7 @@
 import RegisterRouteForm from "@/components/dashboard/register-route-form";
 import RouteList from "@/components/routes-list";
 import { Route } from "@beacon/db";
+
 export default function Dashboard({ routes }: { routes: Route[] }) {
   return (
     <div className="mx-auto w-full max-w-4xl space-y-8 px-4 py-8">

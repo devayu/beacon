@@ -79,7 +79,6 @@ export class AIWorker {
     }
   }
 
-
   private async processJob(
     job: Job<AIJobData, AIJobResult>
   ): Promise<AIJobResult> {
