@@ -12,7 +12,7 @@ const RouteList = ({ routes = [] }: RouteListProps) => {
         return (
           <a
             key={id}
-            href={`/overview/${id}`}
+            href={`/routes/${id}`}
             className="border p-4 hover:border-accent-foreground cursor-pointer rounded-md"
           >
             {url}

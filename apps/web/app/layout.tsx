@@ -1,9 +1,7 @@
-import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
-
+import "./globals.css";
 const satoshi = localFont({
   variable: "--font-sans",
   display: "swap",
@@ -55,7 +53,6 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
-            <Toaster richColors closeButton />
           </ThemeProvider>
         </body>
       </html>

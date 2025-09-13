@@ -63,7 +63,7 @@ const SignInForm = () => {
         },
         onSuccess: (ctx) => {
           setIsLoading(false);
-          router.push("/dashboard");
+          router.push("/overview");
         },
         onError: (ctx) => {
           setIsLoading(false);
