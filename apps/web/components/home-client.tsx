@@ -14,10 +14,7 @@ export default function HomeClient() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
-              <BeaconIcon fill="transparent" stroke="#ff2d2d" />
-              <span className="text-xl font-bold">Beacon</span>
-            </Link>
+            <BeaconIcon asLink showText />
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center gap-6">
@@ -173,11 +170,7 @@ export default function HomeClient() {
 
               <div className="lg:pl-8">
                 <div className="bg-muted rounded-lg p-8">
-                  <BeaconIcon
-                    size={64}
-                    fill="hsl(var(--accent-foreground))"
-                    stroke="white"
-                  />
+                  <BeaconIcon />
                   <h3 className="text-xl font-semibold mt-4 mb-2">
                     Start improving today
                   </h3>
@@ -199,10 +192,7 @@ export default function HomeClient() {
       <footer className="border-t py-12 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <BeaconIcon fill="transparent" stroke="#ff2d2d" />
-              <span className="font-bold">Beacon</span>
-            </div>
+            <BeaconIcon showText />
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
               <Link href="/privacy" className="hover:text-primary">
                 Privacy

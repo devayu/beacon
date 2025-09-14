@@ -6,8 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import IconButton from "@/components/ui/icon-button";
 import { useScanStatus } from "@/hooks/useScanStatus";
+import { cronDescription, parseCron } from "@/lib/cron";
 import { isActionError } from "@/lib/error";
-import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronRightIcon, Edit } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -28,6 +29,7 @@ const Overview = ({ lastRuns }: { lastRuns: GetLastRunsT }) => {
   const [wasPolling, setWasPolling] = useState(false);
   const { metadata } = lastRuns;
   const router = useRouter();
+  const parsedCron = parseCron((metadata?.metadata as any)?.frequency);
 
   const handleScan = async () => {
     setIsScanning(true);
@@ -104,22 +106,36 @@ const Overview = ({ lastRuns }: { lastRuns: GetLastRunsT }) => {
             <h1 className="text-3xl font-semibold mb-2 font-serif">
               Scan Overview
             </h1>
-            <p className="text-gray-600">{metadata?.url}</p>
+            <p className="text-muted-foreground">{metadata?.url}</p>
           </div>
-          <IconButton
-            onClick={handleScan}
-            disabled={isScanning}
-            className="min-w-[120px]"
-          >
-            {isScanning ? "Scanning..." : "New Scan"}
-          </IconButton>
+          <div className="flex flex-col items-end gap-2">
+            <IconButton
+              onClick={handleScan}
+              disabled={isScanning}
+              className="min-w-[120px]"
+            >
+              {isScanning ? "Scanning..." : "New Scan"}
+            </IconButton>
+            <a
+              href={`${metadata?.id}/settings`}
+              className="text-sm flex gap-2 text-muted-foreground"
+            >
+              {parsedCron &&
+                cronDescription(parsedCron?.frequency, {
+                  time: parsedCron?.time,
+                  dayOfMonth: parsedCron?.dayOfMonth,
+                  dayOfWeek: parsedCron?.dayOfWeek,
+                })}
+              <Edit className="size-4"></Edit>{" "}
+            </a>
+          </div>
         </div>
       </div>
 
       {/* Scan Runs List */}
       <div className="space-y-4">
         <h2 className="text-xl font-semibold mb-4">Recent Scan Runs</h2>
-        
+
         {status && isPolling && (
           <ProgressDisplay status={status} isLoading={isLoading} />
         )}

@@ -40,16 +40,23 @@ function DynamicBreadcrumbContent() {
               </a>
             </BreadcrumbLink>
           </BreadcrumbItem>
-          {subPaths?.map((segment, index) => (
-            <div key={index} className="flex items-center">
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink className="capitalize">
-                  {segment}
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            </div>
-          ))}
+          {subPaths?.map((segment, index) => {
+            // Build the URL for this breadcrumb segment
+            const subPathUrl = currentItem.url + "/" + subPaths.slice(0, index + 1).join("/");
+            
+            return (
+              <div key={index} className="flex items-center">
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <a href={subPathUrl} className="capitalize">
+                      {segment}
+                    </a>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+              </div>
+            );
+          })}
         </>
       )}
     </>

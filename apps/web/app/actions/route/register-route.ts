@@ -1,4 +1,5 @@
 "use server";
+import { generateCron } from "@/lib/cron";
 import { ServerActionResponse } from "@/lib/error";
 import { checkUnauthorizedAccess } from "@/lib/get-session";
 import { RegisterRouteFormValues } from "@/lib/zod-schemas";
@@ -28,6 +29,9 @@ export const registerRoute = async (
         "Route already exists, cannot register the route with the same url",
     };
   }
+  // Generate default cron expression for weekly Sunday at 9 AM
+  const defaultCron = generateCron("weekly", "09:00", "0");
+
   logger.info(`Registering route: ${url}`);
   const { id, url: registerdUrl } = await prisma.route.create({
     data: {
@@ -36,6 +40,7 @@ export const registerRoute = async (
       metadata: {
         name,
         type,
+        frequency: defaultCron,
       },
     },
   });

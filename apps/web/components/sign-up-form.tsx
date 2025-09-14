@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -89,9 +90,10 @@ const SignUpForm = () => {
         </p>
       </div>
 
-      <div className="space-y-4 mb-6">
-        <IconButton
+      <div className="flex mb-6 flex-col lg:flex-row gap-2">
+        <Button
           type="button"
+          className="flex-1"
           onClick={() => {
             // TODO: Implement GitHub OAuth
             console.log("GitHub OAuth");
@@ -99,10 +101,11 @@ const SignUpForm = () => {
         >
           <Github size={20} />
           Sign up with GitHub
-        </IconButton>
+        </Button>
 
-        <IconButton
+        <Button
           type="button"
+          className="flex-1"
           onClick={() => {
             // TODO: Implement Google OAuth
             console.log("Google OAuth");
@@ -110,7 +113,7 @@ const SignUpForm = () => {
         >
           <Mail size={20} />
           Sign up with Google
-        </IconButton>
+        </Button>
       </div>
 
       <div className="flex items-center gap-4 mb-6">

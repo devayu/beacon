@@ -4,10 +4,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -17,80 +13,130 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
-import { ChevronsUpDown, User2 } from "lucide-react";
-import { useTheme } from "next-themes";
+import { ChevronsUpDown, LogOut, User, User2, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
+import ThemeSelector from "@/components/theme-selector";
+
+export type Session = typeof authClient.$Infer.Session;
+
+const UserAvatar = ({
+  session,
+  isPending,
+}: {
+  session: Session | null;
+  isPending: boolean;
+}) => {
+  if (isPending) {
+    return (
+      <>
+        <Skeleton className="h-8 w-8 rounded-lg" />
+        <div className="flex flex-col gap-1 flex-1">
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-3 w-24" />
+        </div>
+      </>
+    );
+  }
+  if (!session?.user) {
+    return (
+      <>
+        <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center">
+          <User2 size={16} />
+        </div>
+        <div className="flex flex-col">
+          <p className="font-serif text-sm">Guest User</p>
+          <p className="text-xs text-muted-foreground">Not signed in</p>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {session.user.image ? (
+        <Avatar className="h-8 w-8 rounded-lg">
+          <AvatarImage
+            src={session.user.image}
+            alt={session.user.name ?? "User"}
+          />
+          <AvatarFallback className="rounded-lg">
+            <User2 size={16} />
+          </AvatarFallback>
+        </Avatar>
+      ) : (
+        <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center">
+          <User2 size={16} />
+        </div>
+      )}
+      <div className="flex flex-col flex-1 min-w-0">
+        <p className="font-serif text-sm truncate">
+          {session.user.name ?? "User"}
+        </p>
+        <p className="text-xs text-muted-foreground truncate">
+          {session.user.email}
+        </p>
+      </div>
+    </>
+  );
+};
 const SidebarUserMenu = () => {
-  const { setTheme } = useTheme();
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
   const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/sign-in");
+          },
+          onError: (error) => {
+            console.error("Sign out error:", error);
+            router.push("/sign-in");
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Sign out failed:", error);
+      router.push("/sign-in");
+    }
+  };
+
   return (
     <SidebarFooter className="font-sans">
       <SidebarMenu>
         <SidebarMenuItem>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <SidebarMenuButton>
-                {session?.user.image ? (
-                  <Avatar className="rounded-lg">
-                    <AvatarImage
-                      src={session?.user.image}
-                      alt={session?.user?.name ?? "John Doe"}
-                    />
-                    <AvatarFallback>
-                      <User2 />
-                    </AvatarFallback>
-                  </Avatar>
-                ) : (
-                  <User2 />
-                )}
-                <div className="flex flex-col">
-                  <p className="font-serif">
-                    {session?.user?.name ?? "John Doe"}
-                  </p>
-                  <p>{session?.user.email}</p>
-                </div>
-                <ChevronsUpDown className="ml-auto" />
+              <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+                <UserAvatar session={session} isPending={isPending} />
+                <ChevronsUpDown className="ml-auto size-4" />
               </SidebarMenuButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               side="right"
-              className="w-[--radix-popper-anchor-width]"
+              align="end"
+              className="w-[--radix-popper-anchor-width] min-w-56"
             >
               <DropdownMenuItem>
-                <span>Account</span>
+                <div className="flex gap-2">
+                  <User className="size-4"></User>
+                  Account
+                </div>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <span>Billing</span>
+                <div className="flex gap-2">
+                  <Wallet className="size-4"></Wallet>
+                  Billing
+                </div>
               </DropdownMenuItem>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
-                <DropdownMenuPortal>
-                  <DropdownMenuSubContent>
-                    <DropdownMenuItem onClick={() => setTheme("light")}>
-                      Light
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setTheme("dark")}>
-                      Dark
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setTheme("system")}>
-                      System
-                    </DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuPortal>
-              </DropdownMenuSub>
-              <DropdownMenuItem
-                onClick={() => {
-                  authClient.signOut({
-                    fetchOptions: {
-                      onSuccess: () => {
-                        router.push("/");
-                      },
-                    },
-                  });
-                }}
-              >
-                <span>Sign out</span>
+              <ThemeSelector />
+              <DropdownMenuItem onClick={handleSignOut}>
+                <div className="flex gap-2">
+                  <LogOut className="size-4"></LogOut>
+                  Sign out
+                </div>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

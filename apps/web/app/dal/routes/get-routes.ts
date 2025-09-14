@@ -21,13 +21,14 @@ export const getRegisteredRoutes = async () => {
   }
 };
 
-export const getRoute = async () => {
+export const getRouteById = async (routeId: string) => {
   const user = await checkUnauthorizedAccess();
 
   try {
     const route = await prisma.route.findFirst({
       where: {
         userId: user?.id,
+        id: routeId,
       },
     });
     return route;

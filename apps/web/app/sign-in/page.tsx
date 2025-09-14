@@ -3,11 +3,11 @@ import SignInForm from "@/components/sign-in-form";
 
 export default async function SignInPage() {
   return (
-    <div className="min-h-screen flex">
-      <div className="flex-1 flex items-center justify-center p-8 bg-sidebar">
+    <div className="min-h-screen flex flex-col lg:flex-row">
+      <div className="flex-1 items-center justify-center p-8 bg-sidebar hidden lg:flex">
         <div className="w-full max-w-lg">
-          <div className=" mb-8">
-            <h1 className="text-4xl font-semibold mb-4 font-serif">
+          <div className="mb-8">
+            <h1 className="text-2xl md:text-4xl font-semibold mb-4 font-serif">
               Accessibility Scanning Made Simple
             </h1>
             <p className="mb-6 font-sans text-muted-foreground">

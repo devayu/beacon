@@ -1,10 +1,9 @@
+import { getRegisteredRoutes } from "@/app/dal/routes/get-routes";
 import { Badge } from "@/components/ui/badge";
 import { Route } from "@beacon/db";
 
-type RouteListProps = {
-  routes: Route[];
-};
-const RouteList = ({ routes = [] }: RouteListProps) => {
+const RouteList = async () => {
+  const routes = await getRegisteredRoutes();
   return (
     <div className="flex flex-col gap-4">
       {routes.map(({ id, url, createdAt, metadata }) => {

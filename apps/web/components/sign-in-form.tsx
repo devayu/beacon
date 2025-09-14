@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
@@ -84,28 +85,28 @@ const SignInForm = () => {
         </p>
       </div>
 
-      <div className="space-y-4 mb-6">
-        <IconButton
+      <div className="flex mb-6 flex-col lg:flex-row gap-2">
+        <Button
           type="button"
+          className="flex-1"
           onClick={() => {
-            // TODO: Implement GitHub OAuth
             console.log("GitHub OAuth");
           }}
         >
           <Github size={20} />
-          Sign in with GitHub
-        </IconButton>
+          <p>Sign in with GitHub</p>
+        </Button>
 
-        <IconButton
+        <Button
           type="button"
+          className="flex-1"
           onClick={() => {
-            // TODO: Implement Google OAuth
             console.log("Google OAuth");
           }}
         >
           <Mail size={20} />
-          Sign in with Google
-        </IconButton>
+          <p>Sign in with Google</p>
+        </Button>
       </div>
 
       <div className="flex items-center gap-4 mb-6">
