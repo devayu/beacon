@@ -17,7 +17,6 @@ export class BrowserManager {
 
     const page = await this.context.newPage();
 
-    // Forward browser console logs to Node.js console for debugging
     page.on("console", (msg) => {
       const type = msg.type();
       const text = msg.text();
