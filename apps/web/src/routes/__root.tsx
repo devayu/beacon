@@ -33,14 +33,15 @@ function RootLayout() {
           <HeadContent />
         </head>
         <body>
-          <Outlet></Outlet>
           <Scripts></Scripts>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
-          ></ThemeProvider>
+          >
+            <Outlet></Outlet>
+          </ThemeProvider>
         </body>
       </html>
     </>

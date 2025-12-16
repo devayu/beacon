@@ -1,8 +1,10 @@
 import { checkUnauthorizedAccess } from "@/lib/get-session";
 import { prisma } from "@beacon/db";
-import { logger } from "@beacon/logger";
+import { createServerFn } from "@tanstack/react-start";
+// import { logger } from "@beacon/logger";
 
-export const getLastRuns = async (routeId: string) => {
+export const getLastRuns = createServerFn().handler(async (ctx: any) => {
+  const { data: routeId } = ctx;
   const user = await checkUnauthorizedAccess();
 
   try {
@@ -39,9 +41,9 @@ export const getLastRuns = async (routeId: string) => {
       lastScans,
     };
   } catch (error) {
-    logger.error("Error occurred while trying to fetch routes", error);
+    console.error("Error occurred while trying to fetch routes", error);
     return { lastScans: [] };
   }
-};
+});
 
 export type GetLastRunsT = Awaited<ReturnType<typeof getLastRuns>>;

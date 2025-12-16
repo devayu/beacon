@@ -66,7 +66,7 @@ const RegisterRouteForm = () => {
 
   async function handleSubmit(formdata: RegisterRouteFormValues) {
     startTransition(async () => {
-      const data = await registerRoute(formdata);
+      const data = await registerRoute({ data: formdata } as any);
       if (isActionError(data)) {
         form.setError("root", {
           type: "manual",

@@ -23,6 +23,7 @@ export const generateCron = (
 };
 
 export const parseCron = (cronExpression: string) => {
+  if (!cronExpression) return null;
   const parts = cronExpression.split(" ");
   if (parts.length !== 5) return null;
 

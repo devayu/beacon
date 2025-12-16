@@ -15,8 +15,11 @@ import { Route as DemoRouteRouteImport } from './routes/demo/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as homeRoutesRouteRouteImport } from './routes/(home)/routes/route'
 import { Route as homeRoutesIndexRouteImport } from './routes/(home)/routes/index'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiScreenshotsFilenameRouteRouteImport } from './routes/api/screenshots/$filename/route'
 import { Route as homeRoutesRouteIdRouteRouteImport } from './routes/(home)/routes/$routeId/route'
 import { Route as homeRoutesRouteIdSettingsRouteImport } from './routes/(home)/routes/$routeId/settings'
+import { Route as ApiJobsStatusIdStatusRouteRouteImport } from './routes/api/jobs/$statusId/status/route'
 
 const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
@@ -48,6 +51,17 @@ const homeRoutesIndexRoute = homeRoutesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => homeRoutesRouteRoute,
 } as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiScreenshotsFilenameRouteRoute =
+  ApiScreenshotsFilenameRouteRouteImport.update({
+    id: '/api/screenshots/$filename',
+    path: '/api/screenshots/$filename',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const homeRoutesRouteIdRouteRoute = homeRoutesRouteIdRouteRouteImport.update({
   id: '/$routeId',
   path: '/$routeId',
@@ -59,6 +73,12 @@ const homeRoutesRouteIdSettingsRoute =
     path: '/settings',
     getParentRoute: () => homeRoutesRouteIdRouteRoute,
   } as any)
+const ApiJobsStatusIdStatusRouteRoute =
+  ApiJobsStatusIdStatusRouteRouteImport.update({
+    id: '/api/jobs/$statusId/status',
+    path: '/api/jobs/$statusId/status',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -67,7 +87,10 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof SignUpRoute
   '/routes': typeof homeRoutesRouteRouteWithChildren
   '/routes/$routeId': typeof homeRoutesRouteIdRouteRouteWithChildren
+  '/api/screenshots/$filename': typeof ApiScreenshotsFilenameRouteRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/routes/': typeof homeRoutesIndexRoute
+  '/api/jobs/$statusId/status': typeof ApiJobsStatusIdStatusRouteRoute
   '/routes/$routeId/settings': typeof homeRoutesRouteIdSettingsRoute
 }
 export interface FileRoutesByTo {
@@ -76,7 +99,10 @@ export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/routes/$routeId': typeof homeRoutesRouteIdRouteRouteWithChildren
+  '/api/screenshots/$filename': typeof ApiScreenshotsFilenameRouteRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/routes': typeof homeRoutesIndexRoute
+  '/api/jobs/$statusId/status': typeof ApiJobsStatusIdStatusRouteRoute
   '/routes/$routeId/settings': typeof homeRoutesRouteIdSettingsRoute
 }
 export interface FileRoutesById {
@@ -87,7 +113,10 @@ export interface FileRoutesById {
   '/sign-up': typeof SignUpRoute
   '/(home)/routes': typeof homeRoutesRouteRouteWithChildren
   '/(home)/routes/$routeId': typeof homeRoutesRouteIdRouteRouteWithChildren
+  '/api/screenshots/$filename': typeof ApiScreenshotsFilenameRouteRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/(home)/routes/': typeof homeRoutesIndexRoute
+  '/api/jobs/$statusId/status': typeof ApiJobsStatusIdStatusRouteRoute
   '/(home)/routes/$routeId/settings': typeof homeRoutesRouteIdSettingsRoute
 }
 export interface FileRouteTypes {
@@ -99,7 +128,10 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/routes'
     | '/routes/$routeId'
+    | '/api/screenshots/$filename'
+    | '/api/auth/$'
     | '/routes/'
+    | '/api/jobs/$statusId/status'
     | '/routes/$routeId/settings'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -108,7 +140,10 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/routes/$routeId'
+    | '/api/screenshots/$filename'
+    | '/api/auth/$'
     | '/routes'
+    | '/api/jobs/$statusId/status'
     | '/routes/$routeId/settings'
   id:
     | '__root__'
@@ -118,7 +153,10 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/(home)/routes'
     | '/(home)/routes/$routeId'
+    | '/api/screenshots/$filename'
+    | '/api/auth/$'
     | '/(home)/routes/'
+    | '/api/jobs/$statusId/status'
     | '/(home)/routes/$routeId/settings'
   fileRoutesById: FileRoutesById
 }
@@ -128,6 +166,9 @@ export interface RootRouteChildren {
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   homeRoutesRouteRoute: typeof homeRoutesRouteRouteWithChildren
+  ApiScreenshotsFilenameRouteRoute: typeof ApiScreenshotsFilenameRouteRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiJobsStatusIdStatusRouteRoute: typeof ApiJobsStatusIdStatusRouteRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -174,6 +215,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof homeRoutesIndexRouteImport
       parentRoute: typeof homeRoutesRouteRoute
     }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/screenshots/$filename': {
+      id: '/api/screenshots/$filename'
+      path: '/api/screenshots/$filename'
+      fullPath: '/api/screenshots/$filename'
+      preLoaderRoute: typeof ApiScreenshotsFilenameRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(home)/routes/$routeId': {
       id: '/(home)/routes/$routeId'
       path: '/$routeId'
@@ -187,6 +242,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/routes/$routeId/settings'
       preLoaderRoute: typeof homeRoutesRouteIdSettingsRouteImport
       parentRoute: typeof homeRoutesRouteIdRouteRoute
+    }
+    '/api/jobs/$statusId/status': {
+      id: '/api/jobs/$statusId/status'
+      path: '/api/jobs/$statusId/status'
+      fullPath: '/api/jobs/$statusId/status'
+      preLoaderRoute: typeof ApiJobsStatusIdStatusRouteRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -225,6 +287,9 @@ const rootRouteChildren: RootRouteChildren = {
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   homeRoutesRouteRoute: homeRoutesRouteRouteWithChildren,
+  ApiScreenshotsFilenameRouteRoute: ApiScreenshotsFilenameRouteRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiJobsStatusIdStatusRouteRoute: ApiJobsStatusIdStatusRouteRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

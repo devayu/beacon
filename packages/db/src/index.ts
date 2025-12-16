@@ -1,7 +1,6 @@
 import { PrismaClient } from "./generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
-import { logger } from "@beacon/logger";
 
 declare global {
   var __prisma: PrismaClient | undefined;

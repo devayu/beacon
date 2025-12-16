@@ -2,8 +2,8 @@
   "name": "@beacon/db",
   "version": "1.0.0",
   "description": "Shared database connection and models for Beacon services",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.js",
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",

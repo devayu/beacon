@@ -5,7 +5,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(home)/routes/$routeId")({
   loader: async ({ params }) => {
-    const lastRuns = await getLastRuns(params.routeId);
+    const lastRuns = await getLastRuns({ data: params.routeId } as any);
 
     if (isActionError(lastRuns)) {
       throw redirect({ to: "/" });

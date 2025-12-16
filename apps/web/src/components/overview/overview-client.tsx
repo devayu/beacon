@@ -8,10 +8,19 @@ import IconButton from "@/components/ui/icon-button";
 import { useScanStatus } from "@/hooks/useScanStatus";
 import { cronDescription, parseCron } from "@/lib/cron";
 import { isActionError } from "@/lib/error";
-import { ChevronDownIcon, ChevronRightIcon, Edit } from "lucide-react";
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  Edit,
+  CheckCircle2,
+  ImageIcon,
+  Maximize2,
+  AlertTriangle,
+} from "lucide-react";
 import { useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 type TransformedResult = {
   detailedExplanation: string;
@@ -35,7 +44,7 @@ const Overview = ({ lastRuns }: { lastRuns: GetLastRunsT }) => {
     setIsScanning(true);
 
     try {
-      const res = await scheduleScan(lastRuns.metadata?.id!);
+      const res = await scheduleScan({ data: lastRuns.metadata?.id! } as any);
 
       if (isActionError(res)) {
         toast.error(res.error);
@@ -63,10 +72,13 @@ const Overview = ({ lastRuns }: { lastRuns: GetLastRunsT }) => {
   };
 
   const getPriorityColor = (score: number) => {
-    if (score >= 8.5) return "bg-red-100 text-red-800 border-red-200";
-    if (score >= 7) return "bg-orange-100 text-orange-800 border-orange-200";
-    if (score >= 5) return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    return "bg-green-100 text-green-800 border-green-200";
+    if (score >= 8.5)
+      return "bg-red-500/10 text-red-500 border-red-500/20 shadow-[0_0_10px_-4px_rgba(239,68,68,0.2)]";
+    if (score >= 7)
+      return "bg-orange-500/10 text-orange-500 border-orange-500/20";
+    if (score >= 5)
+      return "bg-yellow-500/10 text-yellow-500 border-yellow-500/20";
+    return "bg-blue-500/10 text-blue-500 border-blue-500/20";
   };
 
   const getPriorityLabel = (score: number) => {
@@ -118,7 +130,7 @@ const Overview = ({ lastRuns }: { lastRuns: GetLastRunsT }) => {
             </IconButton>
             <a
               href={`${metadata?.id}/settings`}
-              className="text-sm flex gap-2 text-muted-foreground"
+              className="text-sm flex gap-2 text-muted-foreground hover:text-foreground transition-colors"
             >
               {parsedCron &&
                 cronDescription(parsedCron?.frequency, {
@@ -133,7 +145,7 @@ const Overview = ({ lastRuns }: { lastRuns: GetLastRunsT }) => {
       </div>
 
       {/* Scan Runs List */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <h2 className="text-xl font-semibold mb-4">Recent Scan Runs</h2>
 
         {status && isPolling && (
@@ -141,113 +153,154 @@ const Overview = ({ lastRuns }: { lastRuns: GetLastRunsT }) => {
         )}
 
         {!lastRuns.lastScans || lastRuns.lastScans.length === 0 ? (
-          <Card>
-            <CardContent className="py-8 text-center">
-              <p className="text-gray-500">
+          <Card className="border-dashed">
+            <CardContent className="py-12 text-center">
+              <p className="text-muted-foreground mb-4">
                 No scan runs found. Start your first scan!
               </p>
             </CardContent>
           </Card>
         ) : (
-          lastRuns.lastScans.map((scan) => {
+          lastRuns.lastScans.map((scan: any) => {
             const parsedResults =
               (scan.transformedResult as TransformedResult[]) || [];
             const isExpanded = expandedRuns.has(scan.id);
             const hasResults = parsedResults.length > 0;
             return (
-              <Card key={scan.id} className="overflow-hidden">
+              <Card
+                key={scan.id}
+                className="overflow-hidden transition-all duration-200 hover:shadow-md hover:border-primary/20 border-l-[3px] border-l-transparent hover:border-l-primary group"
+              >
                 <CardHeader
-                  className="cursor-pointer"
+                  className="cursor-pointer bg-card/50 px-6 py-4"
                   onClick={() => toggleExpansion(scan.id)}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
-                      <div className="flex-shrink-0">
+                      <div className="flex-shrink-0 transition-transform duration-200">
                         {isExpanded ? (
-                          <ChevronDownIcon className="h-5 w-5 text-gray-500" />
+                          <ChevronDownIcon className="h-5 w-5 text-muted-foreground" />
                         ) : (
-                          <ChevronRightIcon className="h-5 w-5 text-gray-500" />
+                          <ChevronRightIcon className="h-5 w-5 text-muted-foreground" />
                         )}
                       </div>
                       <div>
-                        <CardTitle className="text-lg">
-                          Scan Run #{scan.id.slice(-8)}
+                        <CardTitle className="text-base font-medium flex items-center gap-2">
+                          <span className="font-serif">Scan Run</span>
+                          <span className="font-mono text-muted-foreground bg-muted px-1.5 py-0.5 rounded text-xs opacity-70 group-hover:opacity-100 transition-opacity">
+                            #{scan.id.slice(-8)}
+                          </span>
                         </CardTitle>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-xs text-muted-foreground mt-1 font-mono">
                           {new Date(scan.updatedAt).toLocaleString()}
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant="outline">
+                    <div className="flex items-center space-x-3">
+                      <Badge
+                        variant="secondary"
+                        className={cn(
+                          "font-normal",
+                          hasResults
+                            ? "bg-red-500/10 text-red-500 hover:bg-red-500/20"
+                            : "bg-green-500/10 text-green-500"
+                        )}
+                      >
                         {hasResults
-                          ? `${parsedResults.length} issues`
-                          : "No issues"}
+                          ? `${parsedResults.length} issues found`
+                          : "No issues detected"}
                       </Badge>
                       {scan.screenshotUrl && (
-                        <Badge
-                          variant="outline"
-                          className="bg-green-100 text-green-800"
-                        >
-                          completed
-                        </Badge>
+                        <div className="flex items-center gap-1.5 text-xs text-emerald-500 font-medium bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          Done
+                        </div>
                       )}
                     </div>
                   </div>
                 </CardHeader>
 
                 {isExpanded && (
-                  <CardContent className="pt-0">
+                  <CardContent className="pt-0 bg-background/50">
                     {!hasResults ? (
-                      <div className="text-center py-8">
-                        <p className="text-gray-500">
+                      <div className="text-center py-12">
+                        <div className="w-16 h-16 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <CheckCircle2 className="w-8 h-8" />
+                        </div>
+                        <p className="text-foreground font-medium text-lg mb-1">
+                          Passed all checks
+                        </p>
+                        <p className="text-muted-foreground text-sm">
                           {scan.screenshotUrl
-                            ? "No accessibility issues found! 🎉"
+                            ? "No accessibility violations were detected in this run."
                             : "Scan results not available yet"}
                         </p>
                       </div>
                     ) : (
-                      <div className="space-y-6">
+                      <div className="space-y-8 p-6">
                         {/* Screenshots Section */}
                         {(scan.screenshotUrl ||
                           scan.violationsScreenshotUrl) && (
-                          <div className="border-t pt-4">
-                            <h3 className="font-medium mb-3">Screenshots</h3>
-                            <div className="grid gap-4 md:grid-cols-2">
+                          <div className="">
+                            <h3 className="font-medium mb-4 flex items-center gap-2 text-sm text-muted-foreground uppercase tracking-wider">
+                              <ImageIcon className="w-4 h-4" />
+                              Visual Evidence
+                            </h3>
+                            <div className="grid gap-6 md:grid-cols-2">
                               {scan.screenshotUrl && (
-                                <div>
-                                  <p className="text-sm font-medium text-gray-700 mb-2">
-                                    Original Page
+                                <div className="group relative">
+                                  <p className="text-xs font-semibold text-muted-foreground mb-2 pl-1">
+                                    Original State
                                   </p>
-                                  <img
-                                    src={scan.screenshotUrl}
-                                    alt="Page screenshot"
-                                    className="w-full border rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                                  <div
+                                    className="relative rounded-xl overflow-hidden border shadow-sm aspect-video bg-muted/20 cursor-zoom-in ring-1 ring-border/50 group-hover:ring-primary/20 transition-all"
                                     onClick={() =>
                                       window.open(
                                         scan.screenshotUrl as string,
                                         "_blank"
                                       )
                                     }
-                                  />
+                                  >
+                                    <img
+                                      src={scan.screenshotUrl}
+                                      alt="Page screenshot"
+                                      className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                      <span className="text-white text-xs font-medium border border-white/20 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md flex items-center gap-2">
+                                        <Maximize2 className="w-3.5 h-3.5" />
+                                        View Fullscreen
+                                      </span>
+                                    </div>
+                                  </div>
                                 </div>
                               )}
                               {scan.violationsScreenshotUrl && (
-                                <div>
-                                  <p className="text-sm font-medium text-gray-700 mb-2">
+                                <div className="group relative">
+                                  <p className="text-xs font-semibold text-muted-foreground mb-2 pl-1">
                                     Violations Highlighted
                                   </p>
-                                  <img
-                                    src={scan.violationsScreenshotUrl}
-                                    alt="Violations screenshot"
-                                    className="w-full border rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                                  <div
+                                    className="relative rounded-xl overflow-hidden border shadow-sm aspect-video bg-muted/20 cursor-zoom-in ring-1 ring-border/50 group-hover:ring-destructive/20 transition-all"
                                     onClick={() =>
                                       window.open(
                                         scan.violationsScreenshotUrl as string,
                                         "_blank"
                                       )
                                     }
-                                  />
+                                  >
+                                    <img
+                                      src={scan.violationsScreenshotUrl}
+                                      alt="Violations screenshot"
+                                      className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                      <span className="text-white text-xs font-medium border border-white/20 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md flex items-center gap-2">
+                                        <Maximize2 className="w-3.5 h-3.5" />
+                                        View Fullscreen
+                                      </span>
+                                    </div>
+                                  </div>
                                 </div>
                               )}
                             </div>
@@ -255,48 +308,76 @@ const Overview = ({ lastRuns }: { lastRuns: GetLastRunsT }) => {
                         )}
 
                         {/* Issues Section */}
-                        <div className="border-t pt-4">
-                          <h3 className="font-medium mb-3">
-                            Accessibility Issues Found ({parsedResults.length})
+                        <div className="border-t pt-8">
+                          <h3 className="font-medium mb-6 flex items-center gap-2 text-sm text-muted-foreground uppercase tracking-wider">
+                            <AlertTriangle className="w-4 h-4 text-destructive" />
+                            Findings & Recommendations ({parsedResults.length})
                           </h3>
-                          <div className="space-y-3">
+                          <div className="space-y-5">
                             {parsedResults.map((issue, index) => (
-                              <div
+                              <Card
                                 key={`${scan.id}-${issue.ruleId}-${index}`}
-                                className="border rounded-lg p-4 "
+                                className="overflow-hidden border border-border/40 shadow-none bg-zinc-50/50 dark:bg-zinc-900/40"
                               >
-                                <div className="flex items-start justify-between mb-2">
-                                  <div className="flex-1">
-                                    <div className="flex items-center space-x-2 mb-2">
-                                      <code className="text-sm px-2 py-1 rounded font-mono">
-                                        {issue.ruleId}
-                                      </code>
-                                      <Badge
-                                        className={getPriorityColor(
-                                          issue.priorityScore
-                                        )}
-                                      >
-                                        {getPriorityLabel(issue.priorityScore)}{" "}
-                                        ({issue.priorityScore})
-                                      </Badge>
-                                    </div>
-                                    <h4 className="font-medium mb-2 font-serif">
-                                      {issue.explanation}
-                                    </h4>
-                                    <p className="text-sm mb-3 opacity-85 font-sans">
-                                      {issue.detailedExplanation}
-                                    </p>
-                                    <div className="bg-blue-50 border-l-4 border-chart- p-3 rounded">
-                                      <h5 className="font-medium text-chart-1 mb-1">
-                                        Recommendation:
-                                      </h5>
-                                      <p className="text-sm text-chart-1 font-mono">
-                                        <code>{issue.recommendation}</code>
-                                      </p>
+                                <CardContent className="p-0">
+                                  <div className="flex flex-col md:flex-row">
+                                    {/* Left Status Strip */}
+                                    <div
+                                      className={cn(
+                                        "w-full md:w-1",
+                                        getPriorityColor(issue.priorityScore)
+                                          .replace("text-", "bg-")
+                                          .split(" ")[0]
+                                      )}
+                                    />
+
+                                    <div className="p-5 flex-1 flex flex-col gap-4">
+                                      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/40 pb-3">
+                                        <div className="flex items-center gap-3">
+                                          <Badge
+                                            variant="outline"
+                                            className={cn(
+                                              "uppercase font-bold tracking-wider text-[10px] border px-2",
+                                              getPriorityColor(
+                                                issue.priorityScore
+                                              )
+                                            )}
+                                          >
+                                            {getPriorityLabel(
+                                              issue.priorityScore
+                                            )}{" "}
+                                            • {issue.priorityScore}
+                                          </Badge>
+                                          <code className="text-[10px] text-muted-foreground font-mono">
+                                            {issue.ruleId}
+                                          </code>
+                                        </div>
+                                      </div>
+
+                                      <div className="grid md:grid-cols-[1.5fr,1fr] gap-6">
+                                        <div className="space-y-2">
+                                          <h4 className="font-serif text-lg font-medium leading-snug text-foreground">
+                                            {issue.explanation}
+                                          </h4>
+                                          <p className="text-sm text-muted-foreground leading-relaxed">
+                                            {issue.detailedExplanation}
+                                          </p>
+                                        </div>
+
+                                        <div className="bg-background rounded-md border border-border/50 p-4 shadow-sm h-full">
+                                          <h5 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2 flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
+                                            Fix Recommendation
+                                          </h5>
+                                          <div className="text-xs font-mono text-foreground/80 break-words whitespace-pre-wrap leading-relaxed max-h-40 overflow-y-auto custom-scrollbar">
+                                            {issue.recommendation}
+                                          </div>
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              </div>
+                                </CardContent>
+                              </Card>
                             ))}
                           </div>
                         </div>

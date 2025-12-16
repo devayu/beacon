@@ -1,15 +1,18 @@
 import RegisterRouteForm from "@/components/dashboard/register-route-form";
-import RouteListLoader from "@/components/loaders/route-list-loader";
+// import RouteListLoader from "@/components/loaders/route-list-loader";
 import RouteList from "@/components/routes-list";
+import { getRegisteredRoutes } from "@/dal/routes/get-routes";
 import { createFileRoute } from "@tanstack/react-router";
-import { Suspense } from "react";
+// import { Suspense } from "react";
 
 // Note the trailing slash in the path - this denotes an index route
 export const Route = createFileRoute("/(home)/routes/")({
+  loader: async () => await getRegisteredRoutes(),
   component: RoutesIndexPage,
 });
 
 function RoutesIndexPage() {
+  const routes = Route.useLoaderData();
   return (
     <div className="mx-auto w-full max-w-4xl space-y-8 px-4 py-8">
       <div className="mb-8">
@@ -24,9 +27,7 @@ function RoutesIndexPage() {
         </div>
       </div>
 
-      <Suspense fallback={<RouteListLoader />}>
-        <RouteList />
-      </Suspense>
+      <RouteList routes={routes} />
     </div>
   );
 }

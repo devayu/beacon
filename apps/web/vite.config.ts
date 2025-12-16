@@ -18,6 +18,6 @@ export default defineConfig({
   ],
   ssr: {
     // Externalize workspace packages to let Node.js handle them natively (CommonJS compatibility)
-    external: ["@beacon/db", "@beacon/logger"],
+    external: ["@beacon/db", "@beacon/logger", "@beacon/redis"],
   },
 });

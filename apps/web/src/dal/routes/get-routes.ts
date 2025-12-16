@@ -1,10 +1,12 @@
 import { checkUnauthorizedAccess } from "@/lib/get-session";
-import { prisma, Route } from "@beacon/db";
+import { prisma } from "@beacon/db";
 import { logger } from "@beacon/logger";
+import { createServerFn } from "@tanstack/react-start";
 
-export const getRegisteredRoutes = async () => {
+export const getRegisteredRoutes = createServerFn().handler(async () => {
   const user = await checkUnauthorizedAccess();
 
+  console.log("user", user);
   try {
     const routes = await prisma.route.findMany({
       where: {
@@ -14,14 +16,16 @@ export const getRegisteredRoutes = async () => {
         createdAt: "desc",
       },
     });
+    console.log(routes, "routes");
     return routes;
   } catch (error) {
     logger.error("Error occurred while trying to fetch routes", error);
     return [];
   }
-};
+});
 
-export const getRouteById = async (routeId: string) => {
+export const getRouteById = createServerFn().handler(async (ctx: any) => {
+  const { data: routeId } = ctx;
   const user = await checkUnauthorizedAccess();
 
   try {
@@ -36,4 +40,4 @@ export const getRouteById = async (routeId: string) => {
     logger.error("Error occurred while trying to fetch routes", error);
     return null;
   }
-};
+});
