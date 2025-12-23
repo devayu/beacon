@@ -4,12 +4,14 @@ import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(home)/routes/$routeId/settings")({
   component: SettingsPage,
+  loader: async ({ params }) => {
+    const routeInfo = await getRouteById({ data: params.routeId } as any);
+    return routeInfo;
+  },
 });
 
-async function SettingsPage() {
-  const { routeId } = Route.useParams();
-  const routeInfo = await getRouteById(routeId);
-
+function SettingsPage() {
+  const routeInfo = Route.useLoaderData();
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <h2 className="font-serif font-semibold mb-4">Scheduled Frequency</h2>

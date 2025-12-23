@@ -34,6 +34,7 @@ import {
   registerRouteSchema,
 } from "@/lib/zod-schemas";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { useRouter } from "@tanstack/react-router";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 
@@ -54,6 +55,7 @@ const WEBSITE_TYPES = [
 const RegisterRouteForm = () => {
   const [isLoading, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   const form = useForm<RegisterRouteFormValues>({
     resolver: standardSchemaResolver(registerRouteSchema),
@@ -74,6 +76,7 @@ const RegisterRouteForm = () => {
         });
       } else {
         setIsOpen(false);
+        router.invalidate();
       }
     });
   }

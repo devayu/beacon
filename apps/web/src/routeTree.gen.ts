@@ -14,7 +14,9 @@ import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as DemoRouteRouteImport } from './routes/demo/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as homeRoutesRouteRouteImport } from './routes/(home)/routes/route'
+import { Route as homeOverviewRouteRouteImport } from './routes/(home)/overview/route'
 import { Route as homeRoutesIndexRouteImport } from './routes/(home)/routes/index'
+import { Route as homeOverviewIndexRouteImport } from './routes/(home)/overview/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiScreenshotsFilenameRouteRouteImport } from './routes/api/screenshots/$filename/route'
 import { Route as homeRoutesRouteIdRouteRouteImport } from './routes/(home)/routes/$routeId/route'
@@ -46,10 +48,20 @@ const homeRoutesRouteRoute = homeRoutesRouteRouteImport.update({
   path: '/routes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const homeOverviewRouteRoute = homeOverviewRouteRouteImport.update({
+  id: '/(home)/overview',
+  path: '/overview',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const homeRoutesIndexRoute = homeRoutesIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => homeRoutesRouteRoute,
+} as any)
+const homeOverviewIndexRoute = homeOverviewIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => homeOverviewRouteRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -85,10 +97,12 @@ export interface FileRoutesByFullPath {
   '/demo': typeof DemoRouteRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/overview': typeof homeOverviewRouteRouteWithChildren
   '/routes': typeof homeRoutesRouteRouteWithChildren
   '/routes/$routeId': typeof homeRoutesRouteIdRouteRouteWithChildren
   '/api/screenshots/$filename': typeof ApiScreenshotsFilenameRouteRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/overview/': typeof homeOverviewIndexRoute
   '/routes/': typeof homeRoutesIndexRoute
   '/api/jobs/$statusId/status': typeof ApiJobsStatusIdStatusRouteRoute
   '/routes/$routeId/settings': typeof homeRoutesRouteIdSettingsRoute
@@ -101,6 +115,7 @@ export interface FileRoutesByTo {
   '/routes/$routeId': typeof homeRoutesRouteIdRouteRouteWithChildren
   '/api/screenshots/$filename': typeof ApiScreenshotsFilenameRouteRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/overview': typeof homeOverviewIndexRoute
   '/routes': typeof homeRoutesIndexRoute
   '/api/jobs/$statusId/status': typeof ApiJobsStatusIdStatusRouteRoute
   '/routes/$routeId/settings': typeof homeRoutesRouteIdSettingsRoute
@@ -111,10 +126,12 @@ export interface FileRoutesById {
   '/demo': typeof DemoRouteRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/(home)/overview': typeof homeOverviewRouteRouteWithChildren
   '/(home)/routes': typeof homeRoutesRouteRouteWithChildren
   '/(home)/routes/$routeId': typeof homeRoutesRouteIdRouteRouteWithChildren
   '/api/screenshots/$filename': typeof ApiScreenshotsFilenameRouteRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/(home)/overview/': typeof homeOverviewIndexRoute
   '/(home)/routes/': typeof homeRoutesIndexRoute
   '/api/jobs/$statusId/status': typeof ApiJobsStatusIdStatusRouteRoute
   '/(home)/routes/$routeId/settings': typeof homeRoutesRouteIdSettingsRoute
@@ -126,10 +143,12 @@ export interface FileRouteTypes {
     | '/demo'
     | '/sign-in'
     | '/sign-up'
+    | '/overview'
     | '/routes'
     | '/routes/$routeId'
     | '/api/screenshots/$filename'
     | '/api/auth/$'
+    | '/overview/'
     | '/routes/'
     | '/api/jobs/$statusId/status'
     | '/routes/$routeId/settings'
@@ -142,6 +161,7 @@ export interface FileRouteTypes {
     | '/routes/$routeId'
     | '/api/screenshots/$filename'
     | '/api/auth/$'
+    | '/overview'
     | '/routes'
     | '/api/jobs/$statusId/status'
     | '/routes/$routeId/settings'
@@ -151,10 +171,12 @@ export interface FileRouteTypes {
     | '/demo'
     | '/sign-in'
     | '/sign-up'
+    | '/(home)/overview'
     | '/(home)/routes'
     | '/(home)/routes/$routeId'
     | '/api/screenshots/$filename'
     | '/api/auth/$'
+    | '/(home)/overview/'
     | '/(home)/routes/'
     | '/api/jobs/$statusId/status'
     | '/(home)/routes/$routeId/settings'
@@ -165,6 +187,7 @@ export interface RootRouteChildren {
   DemoRouteRoute: typeof DemoRouteRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
+  homeOverviewRouteRoute: typeof homeOverviewRouteRouteWithChildren
   homeRoutesRouteRoute: typeof homeRoutesRouteRouteWithChildren
   ApiScreenshotsFilenameRouteRoute: typeof ApiScreenshotsFilenameRouteRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -208,12 +231,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof homeRoutesRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(home)/overview': {
+      id: '/(home)/overview'
+      path: '/overview'
+      fullPath: '/overview'
+      preLoaderRoute: typeof homeOverviewRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(home)/routes/': {
       id: '/(home)/routes/'
       path: '/'
       fullPath: '/routes/'
       preLoaderRoute: typeof homeRoutesIndexRouteImport
       parentRoute: typeof homeRoutesRouteRoute
+    }
+    '/(home)/overview/': {
+      id: '/(home)/overview/'
+      path: '/'
+      fullPath: '/overview/'
+      preLoaderRoute: typeof homeOverviewIndexRouteImport
+      parentRoute: typeof homeOverviewRouteRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -253,6 +290,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface homeOverviewRouteRouteChildren {
+  homeOverviewIndexRoute: typeof homeOverviewIndexRoute
+}
+
+const homeOverviewRouteRouteChildren: homeOverviewRouteRouteChildren = {
+  homeOverviewIndexRoute: homeOverviewIndexRoute,
+}
+
+const homeOverviewRouteRouteWithChildren =
+  homeOverviewRouteRoute._addFileChildren(homeOverviewRouteRouteChildren)
+
 interface homeRoutesRouteIdRouteRouteChildren {
   homeRoutesRouteIdSettingsRoute: typeof homeRoutesRouteIdSettingsRoute
 }
@@ -286,6 +334,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoRouteRoute: DemoRouteRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
+  homeOverviewRouteRoute: homeOverviewRouteRouteWithChildren,
   homeRoutesRouteRoute: homeRoutesRouteRouteWithChildren,
   ApiScreenshotsFilenameRouteRoute: ApiScreenshotsFilenameRouteRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

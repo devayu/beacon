@@ -1,41 +1,55 @@
-import { SidebarGroup, SidebarGroupLabel } from "@/components/ui/sidebar";
-import { SidebarGroupContent } from "@/components/ui/sidebar";
-import { SidebarMenu } from "@/components/ui/sidebar";
-import { SidebarMenuItem } from "@/components/ui/sidebar";
-import { SidebarMenuButton } from "@/components/ui/sidebar";
 import {
-  Calendar,
-  Inbox,
-  Search,
-  Settings,
-  Home,
-  Blocks,
-  Activity,
-  Book,
-  Bell,
-} from "lucide-react";
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar";
+import { Pin } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type PinnedSidebarGroupProps = {
   items?: any[];
 };
 
 const PinnedSidebarGroup = ({ items = [] }: PinnedSidebarGroupProps) => {
+  if (items.length === 0) {
+    return (
+      <SidebarGroup>
+        <SidebarGroupLabel className="text-xs font-medium uppercase tracking-wider text-muted-foreground/70 px-3 mb-2">
+          Pinned
+        </SidebarGroupLabel>
+        <SidebarGroupContent>
+          <div className="px-3 py-4">
+            <div className="flex flex-col items-center justify-center text-center p-4 rounded-lg border border-dashed border-sidebar-border/50 bg-sidebar-accent/20">
+              <Pin className="h-4 w-4 text-muted-foreground/50 mb-2" />
+              <p className="text-xs text-muted-foreground/70">
+                No pinned items
+              </p>
+            </div>
+          </div>
+        </SidebarGroupContent>
+      </SidebarGroup>
+    );
+  }
+
   return (
     <SidebarGroup>
-      <SidebarGroupLabel className="font-serif text-base">
+      <SidebarGroupLabel className="text-xs font-medium uppercase tracking-wider text-muted-foreground/70 px-3 mb-2">
         Pinned
       </SidebarGroupLabel>
       <SidebarGroupContent>
-        <SidebarMenu>
+        <SidebarMenu className="space-y-1">
           {items.map((item: any) => (
-            <SidebarMenuItem
-              key={item.title}
-              className="text-sm font-sans font-semibold"
-            >
-              <SidebarMenuButton asChild>
-                <a href={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton
+                asChild
+                className="h-9 px-3 rounded-lg hover:bg-sidebar-accent/80 transition-all duration-200"
+              >
+                <a href={item.url} className="flex items-center gap-3">
+                  <item.icon className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">{item.title}</span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
